@@ -237,7 +237,7 @@ function createTextNode() {
   })
   let { width, height } = g.bbox()
   width = Math.min(Math.ceil(width), maxWidth)
-  height = Math.ceil(height)
+  height = Math.max(Math.ceil(height), 6)
   g.attr('data-width', width)
   g.attr('data-height', height)
   g.attr('data-ismultiLine', isMultiLine || textArr.length > 1)
