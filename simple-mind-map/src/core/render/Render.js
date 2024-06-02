@@ -1236,42 +1236,67 @@ class Render {
       return node.isRoot
     })
     if (root) {
-      this.clearActiveNodeList()
-      root.children = []
-      root.nodeData.children = []
+      let block = () => {
+        this.clearActiveNodeList()
+        root.children = []
+        root.nodeData.children = []
+
+        this.activeNodeList = []
+        // 激活被删除节点的兄弟节点或父节点
+        if (needActiveNode) {
+          this.addNodeToActiveList(needActiveNode)
+        }
+        this.emitNodeActiveEvent()
+        this.mindMap.render()
+      }
+      if (root.nodeData.children.length > 0) {
+        this.mindMap.emit('confirm_remove', block)
+        return
+      }
+      block()
     } else {
       // 如果只选中了一个节点，删除后激活其兄弟节点或者父节点
-      needActiveNode = this.getNextActiveNode(list)
-      for (let i = 0; i < list.length; i++) {
-        const node = list[i]
-        const currentEditNode = this.textEdit.getCurrentEditNode()
-        if (
-          currentEditNode &&
-          currentEditNode.getData('uid') === node.getData('uid')
-        ) {
-          // 如果当前节点正在编辑中，那么先完成编辑
-          this.textEdit.hideEditTextBox()
+      let hasChildren = list.some(item => item.nodeData.children.length > 0)
+      let block = () => {
+        needActiveNode = this.getNextActiveNode(list)
+        for (let i = 0; i < list.length; i++) {
+          const node = list[i]
+          const currentEditNode = this.textEdit.getCurrentEditNode()
+          if (
+            currentEditNode &&
+            currentEditNode.getData('uid') === node.getData('uid')
+          ) {
+            // 如果当前节点正在编辑中，那么先完成编辑
+            this.textEdit.hideEditTextBox()
+          }
+          if (isAppointNodes) list.splice(i, 1)
+          if (node.isGeneralization) {
+            this.deleteNodeGeneralization(node)
+            this.removeNodeFromActiveList(node)
+            i--
+          } else {
+            this.removeNodeFromActiveList(node)
+            removeFromParentNodeData(node)
+            i--
+          }
         }
-        if (isAppointNodes) list.splice(i, 1)
-        if (node.isGeneralization) {
-          this.deleteNodeGeneralization(node)
-          this.removeNodeFromActiveList(node)
-          i--
-        } else {
-          this.removeNodeFromActiveList(node)
-          removeFromParentNodeData(node)
-          i--
+
+        this.activeNodeList = []
+        // 激活被删除节点的兄弟节点或父节点
+        if (needActiveNode) {
+          this.addNodeToActiveList(needActiveNode)
         }
+        this.emitNodeActiveEvent()
+        this.mindMap.render()
       }
+      if (hasChildren) {
+        this.mindMap.emit('confirm_remove', block)
+        return
+      }
+      block()
     }
-    this.activeNodeList = []
-    // 激活被删除节点的兄弟节点或父节点
-    if (needActiveNode) {
-      this.addNodeToActiveList(needActiveNode)
-    }
-    this.emitNodeActiveEvent()
-    this.mindMap.render()
   }
+  
 
   // 删除概要节点，即从所属节点里删除该概要
   deleteNodeGeneralization(node) {
