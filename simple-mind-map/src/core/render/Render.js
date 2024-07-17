@@ -42,6 +42,8 @@ import { Polygon } from '@svgdotjs/svg.js'
 const layouts = {
   // 逻辑结构图
   [CONSTANTS.LAYOUT.LOGICAL_STRUCTURE]: LogicalStructure,
+  // 向左逻辑结构图
+  [CONSTANTS.LAYOUT.LOGICAL_STRUCTURE_LEFT]: LogicalStructure,
   // 思维导图
   [CONSTANTS.LAYOUT.MIND_MAP]: MindMap,
   // 目录组织图
@@ -448,6 +450,7 @@ class Render {
       this.mindMap.emit('node_tree_render_end')
       return
     }
+    this.mindMap.emit('node_tree_render_start')
     // 计算布局
     this.layout.doLayout(root => {
       // 删除本次渲染时不再需要的节点
@@ -465,7 +468,6 @@ class Render {
       // 渲染节点
       this.root.render(() => {
         this.isRendering = false
-        this.mindMap.emit('node_tree_render_end')
         callback && callback()
         if (this.hasWaitRendering) {
           const params = this.waitRenderingParams
@@ -485,6 +487,7 @@ class Render {
             this.mindMap.command.addHistory()
           }
         }
+        this.mindMap.emit('node_tree_render_end')
       })
     })
     this.emitNodeActiveEvent()
@@ -1012,14 +1015,18 @@ class Render {
   copy() {
     this.beingCopyData = this.copyNode()
     if (!this.beingCopyData) return
-    setDataToClipboard(createSmmFormatData(this.beingCopyData))
+    if (!this.mindMap.opt.disabledClipboard) {
+      setDataToClipboard(createSmmFormatData(this.beingCopyData))
+    }
   }
 
   // 剪切节点
   cut() {
     this.mindMap.execCommand('CUT_NODE', copyData => {
       this.beingCopyData = copyData
-      setDataToClipboard(createSmmFormatData(copyData))
+      if (!this.mindMap.opt.disabledClipboard) {
+        setDataToClipboard(createSmmFormatData(copyData))
+      }
     })
   }
 
@@ -1028,17 +1035,20 @@ class Render {
     const {
       errorHandler,
       handleIsSplitByWrapOnPasteCreateNewNode,
-      handleNodePasteImg
+      handleNodePasteImg,
+      disabledClipboard
     } = this.mindMap.opt
     // 读取剪贴板的文字和图片
-    let text = null
+    let text = ''
     let img = null
-    try {
-      const res = await getDataFromClipboard()
-      text = res.text
-      img = res.img
-    } catch (error) {
-      errorHandler(ERROR_TYPES.READ_CLIPBOARD_ERROR, error)
+    if (!disabledClipboard) {
+      try {
+        const res = await getDataFromClipboard()
+        text = res.text || ''
+        img = res.img || null
+      } catch (error) {
+        errorHandler(ERROR_TYPES.READ_CLIPBOARD_ERROR, error)
+      }
     }
     // 检查剪切板数据是否有变化
     // 通过图片大小来判断图片是否发生变化，可能是不准确的，但是目前没有其他好方法
@@ -1577,7 +1587,7 @@ class Render {
   //  切换激活节点的展开状态
   toggleActiveExpand() {
     this.activeNodeList.forEach(node => {
-      if (node.nodeData.children.length <= 0) {
+      if (node.nodeData.children.length <= 0 || node.isRoot) {
         return
       }
       this.toggleNodeExpand(node)
@@ -1823,9 +1833,13 @@ class Render {
     }
   }
 
-  //  移动节点到画布中心
-  moveNodeToCenter(node) {
-    const { resetScaleOnMoveNodeToCenter } = this.mindMap.opt
+  // 移动节点到画布中心
+  // resetScale参数指定是否要将画布缩放值复位为100%，当你没有显式传递时，默认值为undefined，因为实例化选项的resetScaleOnMoveNodeToCenter配置也会决定是否复位缩放，所以当你没有显式传递时使用resetScaleOnMoveNodeToCenter配置，否则使用resetScale配置
+  moveNodeToCenter(node, resetScale) {
+    let { resetScaleOnMoveNodeToCenter } = this.mindMap.opt
+    if (resetScale !== undefined) {
+      resetScaleOnMoveNodeToCenter = resetScale
+    }
     let { transform, state } = this.mindMap.view.getTransformData()
     let { left, top, width, height } = node
     if (!resetScaleOnMoveNodeToCenter) {

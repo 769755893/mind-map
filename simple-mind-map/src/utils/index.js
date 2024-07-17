@@ -207,7 +207,7 @@ export const copyNodeTree = (
 }
 
 //  图片转成dataURL
-export const imgToDataUrl = src => {
+export const imgToDataUrl = (src, returnBlob = false) => {
   return new Promise((resolve, reject) => {
     const img = new Image()
     // 跨域图片需要添加这个属性，否则画布被污染了无法导出图片
@@ -220,7 +220,13 @@ export const imgToDataUrl = src => {
         let ctx = canvas.getContext('2d')
         // 图片绘制到canvas里
         ctx.drawImage(img, 0, 0, img.width, img.height)
-        resolve(canvas.toDataURL())
+        if (returnBlob) {
+          canvas.toBlob(blob => {
+            resolve(blob)
+          })
+        } else {
+          resolve(canvas.toDataURL())
+        }
       } catch (e) {
         reject(e)
       }
@@ -1335,7 +1341,7 @@ export const handleGetSvgDataExtraContent = ({
       if (!res) return
       const { el, cssText, height } = res
       if (el instanceof HTMLElement) {
-        el.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml')
+        addXmlns(el)
         const foreignObject = createForeignObjectNode({ el, height })
         callback(foreignObject, height)
       }
@@ -1368,7 +1374,8 @@ export const getNodeTreeBoundingRect = (
   y = 0,
   paddingX = 0,
   paddingY = 0,
-  excludeSelf = false
+  excludeSelf = false,
+  excludeGeneralization = false
 ) => {
   let minX = Infinity
   let maxX = -Infinity
@@ -1392,7 +1399,7 @@ export const getNodeTreeBoundingRect = (
         maxY = y + height
       }
     }
-    if (root._generalizationList.length > 0) {
+    if (!excludeGeneralization && root._generalizationList.length > 0) {
       root._generalizationList.forEach(item => {
         walk(item.generalizationNode)
       })
@@ -1410,6 +1417,49 @@ export const getNodeTreeBoundingRect = (
   maxX = maxX - x + paddingX
   maxY = maxY - y + paddingY
 
+  return {
+    left: minX,
+    top: minY,
+    width: maxX - minX,
+    height: maxY - minY
+  }
+}
+
+// 获取多个节点总的包围框
+export const getNodeListBoundingRect = (
+  nodeList,
+  x = 0,
+  y = 0,
+  paddingX = 0,
+  paddingY = 0
+) => {
+  let minX = Infinity
+  let maxX = -Infinity
+  let minY = Infinity
+  let maxY = -Infinity
+  nodeList.forEach(node => {
+    const { left, top, width, height } = getNodeTreeBoundingRect(
+      node,
+      x,
+      y,
+      paddingX,
+      paddingY,
+      false,
+      true
+    )
+    if (left < minX) {
+      minX = left
+    }
+    if (left + width > maxX) {
+      maxX = left + width
+    }
+    if (top < minY) {
+      minY = top
+    }
+    if (top + height > maxY) {
+      maxY = top + height
+    }
+  })
   return {
     left: minX,
     top: minY,
@@ -1475,4 +1525,58 @@ export const formatGetNodeGeneralization = data => {
   } else {
     return []
   }
+}
+
+/**
+ * 防御 XSS 攻击，过滤恶意 HTML 标签和属性
+ * @param {string} text 需要过滤的文本
+ * @returns {string} 过滤后的文本
+ */
+export const defenseXSS = text => {
+  text = String(text)
+
+  // 初始化结果变量
+  let result = text
+
+  // 使用正则表达式匹配 HTML 标签
+  const match = text.match(/<(\S*?)[^>]*>.*?|<.*? \/>/g)
+  if (match == null) {
+    // 如果没有匹配到任何标签，则直接返回原始文本
+    return text
+  }
+
+  // 遍历匹配到的标签
+  for (let value of match) {
+    // 定义白名单属性正则表达式（style、target、href）
+    const whiteAttrRegex = new RegExp(/(style|target|href)=["'][^"']*["']/g)
+
+    // 定义黑名单href正则表达式（javascript:）
+    const aHrefBlackRegex = new RegExp(/href=["']javascript:/g)
+
+    // 过滤 HTML 标签
+    const filterHtml = value.replace(
+      // 匹配属性键值对（如：key="value"）
+      /([a-zA-Z-]+)\s*=\s*["']([^"']*)["']/g,
+      text => {
+        // 如果属性值包含黑名单href或不在白名单中，则删除该属性
+        if (aHrefBlackRegex.test(text) || !whiteAttrRegex.test(text)) {
+          return ''
+        }
+
+        // 否则，保留该属性
+        return text
+      }
+    )
+
+    // 将过滤后的标签替换回原始文本
+    result = result.replace(value, filterHtml)
+  }
+
+  // 返回最终结果
+  return result
+}
+
+// 给节点添加命名空间
+export const addXmlns = el => {
+  el.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml')
 }

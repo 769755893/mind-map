@@ -104,7 +104,11 @@ copyRenderTree({}, this.mindMap.renderer.renderTree)
 copyNodeTree({}, node)
 ```
 
-#### imgToDataUrl(src)
+#### imgToDataUrl(src, returnBlob = false)
+
+- `src`：图片url
+
+- `returnBlob`：v0.10.2+，是否以Blob格式返回结果，默认为DataURL格式
 
 图片转成 dataURL
 
@@ -510,6 +514,16 @@ document.addEventListener(fullscrrenEvent, () => {
 > v0.9.11+
 
 退出全屏状态。
+
+#### defenseXSS(htmlStr)
+
+> v0.10.0+
+
+- `htmlStr`：需要过滤的html字符串
+
+返回：过滤后的html字符串
+
+防御 XSS 攻击，过滤恶意 HTML 标签和属性。你可以在将节点数据传递给SimpleMindMap前递归遍历树数据，通过该方法处理节点富文本内容，避免 XSS 攻击。
 
 ## 在 canvas 中模拟 css 的背景属性
 

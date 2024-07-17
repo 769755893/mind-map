@@ -66,7 +66,15 @@ basic data, otherwise it will throw an error</p>
 and copying the <code>data</code> of the data object, example:</p>
 <pre class="hljs"><code>copyNodeTree({}, node);
 </code></pre>
-<h4>imgToDataUrl(src)</h4>
+<h4>imgToDataUrl(src, returnBlob = false)</h4>
+<ul>
+<li>
+<p><code>src</code>：Image url</p>
+</li>
+<li>
+<p><code>returnBlob</code>：v0.10.2+，Is the result returned in Blob format, defaulting to DataURL format</p>
+</li>
+</ul>
 <p>Convert image to dataURL</p>
 <h4>downloadFile(file, fileName)</h4>
 <p>Download file</p>
@@ -424,6 +432,15 @@ and copying the <code>data</code> of the data object, example:</p>
 <p>v0.9.11+</p>
 </blockquote>
 <p>Exit full screen mode.</p>
+<h4>defenseXSS(htmlStr)</h4>
+<blockquote>
+<p>v0.10.0+</p>
+</blockquote>
+<ul>
+<li><code>htmlStr</code>：HTML strings that need to be filtered</li>
+</ul>
+<p>Return：Filtered HTML string</p>
+<p>Defend against XSS attacks, filter malicious HTML tags and attributes. You can recursively traverse the tree data before passing the node data to SimpleMindMap, using this method to process the rich text content of nodes and avoid XSS attacks.</p>
 <h2>Simulate CSS background in Canvas</h2>
 <p>Import:</p>
 <pre class="hljs"><code><span class="hljs-keyword">import</span> drawBackgroundImageToCanvas <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;simple-mind-map/src/utils/simulateCSSBackgroundInCanvas&#x27;</span>

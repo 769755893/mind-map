@@ -8,22 +8,22 @@
 </blockquote>
 <h2>特性</h2>
 <ul>
-<li><input type="checkbox" id="checkbox235" checked="true" /><label for="checkbox235">插件化架构，除核心功能外，其他功能作为插件提供，按需使用，减小打包体积</label></li>
-<li><input type="checkbox" id="checkbox236" checked="true" /><label for="checkbox236">支持逻辑结构图、思维导图、组织结构图、目录组织图、时间轴（横向、竖向）、鱼骨图等结构</label></li>
-<li><input type="checkbox" id="checkbox237" checked="true" /><label for="checkbox237">内置多种主题，允许高度自定义样式，支持注册新主题</label></li>
-<li><input type="checkbox" id="checkbox238" checked="true" /><label for="checkbox238">节点内容支持文本（普通文本、富文本）、图片、图标、超链接、备注、标签、概要、数学公式</label></li>
-<li><input type="checkbox" id="checkbox239" checked="true" /><label for="checkbox239">节点支持拖拽（拖拽移动、自由调整）、多种节点形状；支持扩展节点内容、支持使用 DDM 完全自定义节点内容</label></li>
-<li><input type="checkbox" id="checkbox240" checked="true" /><label for="checkbox240">支持画布拖动、缩放</label></li>
-<li><input type="checkbox" id="checkbox241" checked="true" /><label for="checkbox241">支持鼠标按键拖动选择和 Ctrl+左键两种多选节点方式</label></li>
-<li><input type="checkbox" id="checkbox242" checked="true" /><label for="checkbox242">支持导出为</label><code>json</code>、<code>png</code>、<code>svg</code>、<code>pdf</code>、<code>markdown</code>、<code>xmind</code>、<code>txt</code>，支持从<code>json</code>、<code>xmind</code>、<code>markdown</code>导入</li>
-<li><input type="checkbox" id="checkbox243" checked="true" /><label for="checkbox243">支持快捷键、前进后退、关联线、搜索替换、小地图、水印、滚动条、手绘风格、彩虹线条</label></li>
-<li><input type="checkbox" id="checkbox244" checked="true" /><label for="checkbox244">提供丰富的配置，满足各种场景各种使用习惯</label></li>
-<li><input type="checkbox" id="checkbox245" checked="true" /><label for="checkbox245">支持协同编辑</label></li>
-<li><input type="checkbox" id="checkbox246" checked="true" /><label for="checkbox246">支持演示模式</label></li>
+<li><input type="checkbox" id="checkbox34" checked="true" /><label for="checkbox34">插件化架构，除核心功能外，其他功能作为插件提供，按需使用，减小打包体积</label></li>
+<li><input type="checkbox" id="checkbox35" checked="true" /><label for="checkbox35">支持逻辑结构图（向左、向右逻辑结构图）、思维导图、组织结构图、目录组织图、时间轴（横向、竖向）、鱼骨图等结构</label></li>
+<li><input type="checkbox" id="checkbox36" checked="true" /><label for="checkbox36">内置多种主题，允许高度自定义样式，支持注册新主题</label></li>
+<li><input type="checkbox" id="checkbox37" checked="true" /><label for="checkbox37">节点内容支持文本（普通文本、富文本）、图片、图标、超链接、备注、标签、概要、数学公式</label></li>
+<li><input type="checkbox" id="checkbox38" checked="true" /><label for="checkbox38">节点支持拖拽（拖拽移动、自由调整）、多种节点形状；支持扩展节点内容、支持使用 DDM 完全自定义节点内容</label></li>
+<li><input type="checkbox" id="checkbox39" checked="true" /><label for="checkbox39">支持画布拖动、缩放</label></li>
+<li><input type="checkbox" id="checkbox40" checked="true" /><label for="checkbox40">支持鼠标按键拖动选择和 Ctrl+左键两种多选节点方式</label></li>
+<li><input type="checkbox" id="checkbox41" checked="true" /><label for="checkbox41">支持导出为</label><code>json</code>、<code>png</code>、<code>svg</code>、<code>pdf</code>、<code>markdown</code>、<code>xmind</code>、<code>txt</code>，支持从<code>json</code>、<code>xmind</code>、<code>markdown</code>导入</li>
+<li><input type="checkbox" id="checkbox42" checked="true" /><label for="checkbox42">支持快捷键、前进后退、关联线、搜索替换、小地图、水印、滚动条、手绘风格、彩虹线条</label></li>
+<li><input type="checkbox" id="checkbox43" checked="true" /><label for="checkbox43">提供丰富的配置，满足各种场景各种使用习惯</label></li>
+<li><input type="checkbox" id="checkbox44" checked="true" /><label for="checkbox44">支持协同编辑</label></li>
+<li><input type="checkbox" id="checkbox45" checked="true" /><label for="checkbox45">支持演示模式</label></li>
 </ul>
 <p>官方提供了如下插件，可根据需求按需引入（某个功能不生效大概率是因为你没有引入对应的插件），具体使用方式请查看文档：</p>
 <blockquote>
-<p>RichText（节点富文本插件）、Select（鼠标多选节点插件）、Drag（节点拖拽插件）、AssociativeLine（关联线插件）、Export（导出插件）、KeyboardNavigation（键盘导航插件）、MiniMap（小地图插件）、Watermark（水印插件）、TouchEvent（移动端触摸事件支持插件）、NodeImgAdjust（拖拽调整节点图片大小插件）、Search（搜索插件）、Painter（节点格式刷插件）、Scrollbar（滚动条插件）、Formula（数学公式插件）、Cooperate（协同编辑插件）、RainbowLines（彩虹线条插件）、Demonstrate（演示模式插件）、HandDrawnLikeStyle（手绘风格插件）[收费]</p>
+<p>RichText（节点富文本插件）、Select（鼠标多选节点插件）、Drag（节点拖拽插件）、AssociativeLine（关联线插件）、Export（导出插件）、KeyboardNavigation（键盘导航插件）、MiniMap（小地图插件）、Watermark（水印插件）、TouchEvent（移动端触摸事件支持插件）、NodeImgAdjust（拖拽调整节点图片大小插件）、Search（搜索插件）、Painter（节点格式刷插件）、Scrollbar（滚动条插件）、Formula（数学公式插件）、Cooperate（协同编辑插件）、RainbowLines（彩虹线条插件）、Demonstrate（演示模式插件）、OuterFrame（外框插件）、HandDrawnLikeStyle（手绘风格插件）[收费]、Notation（节点标记插件）[收费]</p>
 </blockquote>
 <p>本项目不会实现的特性：</p>
 <blockquote>
@@ -37,11 +37,11 @@
 <p>2.<code>web</code></p>
 <p>使用<code>simple-mind-map</code>库，基于<code>vue2.x</code>、<code>ElementUI</code>搭建的在线思维导图。特性：</p>
 <ul>
-<li><input type="checkbox" id="checkbox247" checked="true" /><label for="checkbox247">工具栏，支持插入节点、删除节点；编辑节点图片、图标、超链接、备注、标签、概要</label></li>
-<li><input type="checkbox" id="checkbox248" checked="true" /><label for="checkbox248">侧边栏，基础样式设置面板、节点样式设置面板、大纲面板、主题选择面板、结构选择面板</label></li>
-<li><input type="checkbox" id="checkbox249" checked="true" /><label for="checkbox249">导入导出功能；数据默认保存在浏览器本地存储，也支持直接创建、打开、编辑电脑本地文件</label></li>
-<li><input type="checkbox" id="checkbox250" checked="true" /><label for="checkbox250">右键菜单，支持展开、收起、整理布局等操作</label></li>
-<li><input type="checkbox" id="checkbox251" checked="true" /><label for="checkbox251">底部栏，支持节点数量、字数统计；支持切换编辑和只读模式；支持放大缩小；支持全屏切换；支持小地图</label></li>
+<li><input type="checkbox" id="checkbox46" checked="true" /><label for="checkbox46">工具栏，支持插入节点、删除节点；编辑节点图片、图标、超链接、备注、标签、概要</label></li>
+<li><input type="checkbox" id="checkbox47" checked="true" /><label for="checkbox47">侧边栏，基础样式设置面板、节点样式设置面板、大纲面板、主题选择面板、结构选择面板</label></li>
+<li><input type="checkbox" id="checkbox48" checked="true" /><label for="checkbox48">导入导出功能；数据默认保存在浏览器本地存储，也支持直接创建、打开、编辑电脑本地文件</label></li>
+<li><input type="checkbox" id="checkbox49" checked="true" /><label for="checkbox49">右键菜单，支持展开、收起、整理布局等操作</label></li>
+<li><input type="checkbox" id="checkbox50" checked="true" /><label for="checkbox50">底部栏，支持节点数量、字数统计；支持切换编辑和只读模式；支持放大缩小；支持全屏切换；支持小地图</label></li>
 </ul>
 <p>提供文档页面服务。</p>
 <p>3.<code>dist</code></p>
@@ -330,8 +330,8 @@
         <p>庆国</p>
     </div>
     <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
-        <img src="../../../../assets/avatar/孟照星.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
-        <p>孟照星</p>
+        <img src="../../../../assets/avatar/Alex.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>Alex</p>
     </div>
     <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
         <img src="../../../../assets/avatar/子豪.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
@@ -341,7 +341,54 @@
         <img src="../../../../assets/avatar/宏涛.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
         <p>宏涛</p>
     </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/最多5个字.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>最多5个字</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/雨馨.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>雨馨</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/ZX.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>ZX</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/峰.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>峰</p>
+    </div>
 </div>
+<div style="display: flex;">
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/default.png" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>协成</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/木木.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>木木</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/好名字.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>好名字</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/Kyle.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>Kyle</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/lsytyrt.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>lsytyrt</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/秀树因馨雨.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>秀树因馨雨</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/buddy.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>buddy</p>
+    </div>
+</div>
+
   </div>
 </template>
 

@@ -1,6 +1,87 @@
 <template>
   <div>
     <h1>Changelog</h1>
+<h2>0.10.2 / 0.10.2-fix.1</h2>
+<blockquote>
+<p>2024.7.3</p>
+</blockquote>
+<p>Fix:</p>
+<blockquote>
+<p>1.Fix the issue of node text and custom content with the createNodePrefixContent option not being vertically centered;</p>
+<p>2.Fix the issue of selecting node text when dragging the endpoints of associated lines;</p>
+</blockquote>
+<p>New:</p>
+<blockquote>
+<p>1.Add external frame plugins;</p>
+<p>2.Add a leftward logical structure diagram;</p>
+<p>3.The mini map supports dragging and dropping view boxes to adjust the canvas position;</p>
+<p>4.Add an instantiation option to intercept nodes and start dragging them;</p>
+<p>5.Prevent default behavior for mousedown, mousemove, drag, and node.mousedown events;</p>
+<p>6.The beforeDragEnd option of the drag plugin adds a callback parameter to the list of nodes that are currently being dragged;</p>
+<p>7.Add an instantiation option that prohibits reading and writing to the user's clipboard;</p>
+<p>8.Independently separate the canvas automatic movement function of the Select plugin to solve the problem of the Drag plugin being unable to use the canvas automatic movement function without registering the Select plugin;</p>
+<p>9.Add callback parameters to the edited node for the hide_text_edit event;</p>
+<p>10.Activate the node when clicking on the hyperlink icon; Add instantiation options for custom hyperlink redirection;</p>
+</blockquote>
+<p>Demo:</p>
+<blockquote>
+<p>1.Color selection supports transparency selection;</p>
+<p>2.Add external frame setting function;</p>
+<p>3.Add copy to clipboard function in the right-click menu;</p>
+<p>4.Add a leftward logical structure diagram;</p>
+<p>5.Fix the issue where the event does not end after the mouse is moved out of the mini map and then released;</p>
+<p>6.The mini map supports dragging and dropping view boxes to adjust the canvas position;</p>
+</blockquote>
+<h2>0.10.1</h2>
+<p>Fix:</p>
+<blockquote>
+<p>1.Fix the issue where the TouchEvent plugin triggers node input when clicking twice at different positions;</p>
+<p>2.Fix / shortcut the issue of being able to retrieve child nodes of the root node;</p>
+</blockquote>
+<p>New:</p>
+<blockquote>
+<p>1.Add instantiation options for handling SVG objects before export;</p>
+<p>2.Add instantiation options for cloned nodes when modifying drag and drop nodes;</p>
+<p>3.Add a content layout completion event for distributing individual nodes;</p>
+<p>4.Add instantiation options for intercepting node drag and drop;</p>
+<p>5.Add instantiation options to restrict the maximum and minimum values of TouchEvent plugin's double finger scaling;</p>
+<p>6.Add node marker plugin;</p>
+</blockquote>
+<p>Demo:</p>
+<blockquote>
+<p>1.Add node marking function;</p>
+<p>2.Fix the issue where the input box in the bottom right corner cannot be entered in demonstration mode;</p>
+<p>3.Do not display directory, new, or open buttons when opening on the mobile end;</p>
+</blockquote>
+<h2>0.10.0</h2>
+<p>Major updates: Upgrade the interaction effect when dragging nodes;</p>
+<p>Fix:</p>
+<blockquote>
+<p>1.Fix the issue where read-only mode can still activate nodes by Ctrl+clicking on them;</p>
+<p>2.Fix the issue of page scaling when setting up scaling in some mobile browsers;</p>
+<p>3.Fix the issue of selecting text when dragging the canvas and adjusting images;</p>
+<p>4.Fix the issue of multiple line breaks when copying node text with line breaks and pasting it;</p>
+<p>5.Fix the issue of displaying blank space when exporting images with custom content before and after nodes;</p>
+</blockquote>
+<p>New:</p>
+<blockquote>
+<p>1.Add a new rendering start event node.treeRender_start;</p>
+<p>2.Support displaying watermarks below nodes;</p>
+<p>3.Importing xmind files with multiple canvases supports selecting the specified canvas for import;</p>
+<p>4.Canceling the call to the defenseXSS function has a significant impact on performance; The defenseXSS method is provided as a tool method;</p>
+<p>5.Remove the logic of removing nodes with ql cursor class names from rich text content, and fix the issue of ineffective addition of empty lines when text breaks;</p>
+<p>6.Remove the logic of delayed node editing when inserting new nodes;</p>
+<p>7.Support direct editing of mathematical formulas in rich text editing boxes;</p>
+<p>8.Add demonstration plugins to the packaged file;</p>
+</blockquote>
+<p>Demo：</p>
+<blockquote>
+<p>1.支持配置水印显示在节点下方；</p>
+<p>2.导入存在多个画布的xmind文件支持选择指定的画布进行导入；</p>
+<p>3.优化富文本工具条下拉选项列表高度问题；</p>
+<p>4.新建和打开按钮增加导出的提示，防止内容丢失；</p>
+<p>5.快捷键提示支持区分windows和mac；</p>
+</blockquote>
 <h2>0.9.12</h2>
 <p>Fix:</p>
 <blockquote>

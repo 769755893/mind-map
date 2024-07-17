@@ -1,5 +1,127 @@
 # Changelog
 
+## 0.10.2 / 0.10.2-fix.1
+
+> 2024.7.3
+
+Fix:
+
+> 1.Fix the issue of node text and custom content with the createNodePrefixContent option not being vertically centered;
+>
+> 2.Fix the issue of selecting node text when dragging the endpoints of associated lines;
+
+New:
+
+> 1.Add external frame plugins;
+>
+> 2.Add a leftward logical structure diagram;
+>
+> 3.The mini map supports dragging and dropping view boxes to adjust the canvas position;
+>
+> 4.Add an instantiation option to intercept nodes and start dragging them;
+>
+> 5.Prevent default behavior for mousedown, mousemove, drag, and node.mousedown events;
+>
+> 6.The beforeDragEnd option of the drag plugin adds a callback parameter to the list of nodes that are currently being dragged;
+>
+> 7.Add an instantiation option that prohibits reading and writing to the user's clipboard;
+>
+> 8.Independently separate the canvas automatic movement function of the Select plugin to solve the problem of the Drag plugin being unable to use the canvas automatic movement function without registering the Select plugin;
+>
+> 9.Add callback parameters to the edited node for the hide_text_edit event;
+>
+> 10.Activate the node when clicking on the hyperlink icon; Add instantiation options for custom hyperlink redirection;
+
+Demo:
+
+> 1.Color selection supports transparency selection;
+>
+> 2.Add external frame setting function;
+>
+> 3.Add copy to clipboard function in the right-click menu;
+>
+> 4.Add a leftward logical structure diagram;
+>
+> 5.Fix the issue where the event does not end after the mouse is moved out of the mini map and then released;
+>
+> 6.The mini map supports dragging and dropping view boxes to adjust the canvas position;
+
+## 0.10.1
+
+Fix:
+
+> 1.Fix the issue where the TouchEvent plugin triggers node input when clicking twice at different positions;
+>
+> 2.Fix / shortcut the issue of being able to retrieve child nodes of the root node;
+
+New:
+
+> 1.Add instantiation options for handling SVG objects before export;
+>
+> 2.Add instantiation options for cloned nodes when modifying drag and drop nodes;
+>
+> 3.Add a content layout completion event for distributing individual nodes;
+>
+> 4.Add instantiation options for intercepting node drag and drop;
+>
+> 5.Add instantiation options to restrict the maximum and minimum values of TouchEvent plugin's double finger scaling;
+>
+> 6.Add node marker plugin;
+
+Demo:
+
+> 1.Add node marking function;
+>
+> 2.Fix the issue where the input box in the bottom right corner cannot be entered in demonstration mode;
+>
+> 3.Do not display directory, new, or open buttons when opening on the mobile end;
+
+## 0.10.0
+
+Major updates: Upgrade the interaction effect when dragging nodes;
+
+Fix:
+
+> 1.Fix the issue where read-only mode can still activate nodes by Ctrl+clicking on them;
+>
+> 2.Fix the issue of page scaling when setting up scaling in some mobile browsers;
+>
+> 3.Fix the issue of selecting text when dragging the canvas and adjusting images;
+>
+> 4.Fix the issue of multiple line breaks when copying node text with line breaks and pasting it;
+>
+> 5.Fix the issue of displaying blank space when exporting images with custom content before and after nodes;
+
+New:
+
+> 1.Add a new rendering start event node.treeRender_start;
+>
+> 2.Support displaying watermarks below nodes;
+>
+> 3.Importing xmind files with multiple canvases supports selecting the specified canvas for import;
+>
+> 4.Canceling the call to the defenseXSS function has a significant impact on performance; The defenseXSS method is provided as a tool method;
+>
+> 5.Remove the logic of removing nodes with ql cursor class names from rich text content, and fix the issue of ineffective addition of empty lines when text breaks;
+>
+> 6.Remove the logic of delayed node editing when inserting new nodes;
+>
+> 7.Support direct editing of mathematical formulas in rich text editing boxes;
+>
+> 8.Add demonstration plugins to the packaged file;
+
+Demo：
+
+> 1.支持配置水印显示在节点下方；
+>
+> 2.导入存在多个画布的xmind文件支持选择指定的画布进行导入；
+>
+> 3.优化富文本工具条下拉选项列表高度问题；
+>
+> 4.新建和打开按钮增加导出的提示，防止内容丢失；
+>
+> 5.快捷键提示支持区分windows和mac；
+
 ## 0.9.12
 
 Fix:
