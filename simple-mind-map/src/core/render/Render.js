@@ -31,7 +31,8 @@ import {
   checkSmmFormatData,
   checkIsNodeStyleDataKey,
   removeRichTextStyes,
-  formatGetNodeGeneralization
+  formatGetNodeGeneralization,
+  sortNodeList
 } from '../../utils'
 import { shapeList } from './node/Shape'
 import { lineStyleProps } from '../../themes/default'
@@ -1398,7 +1399,8 @@ class Render {
     if (this.activeNodeList.length <= 0) {
       return null
     }
-    const nodeList = getTopAncestorsFomNodeList(this.activeNodeList)
+    let nodeList = getTopAncestorsFomNodeList(this.activeNodeList)
+    nodeList = sortNodeList(nodeList)
     return nodeList.map(node => {
       return copyNodeTree({}, node, true)
     })
@@ -1410,11 +1412,12 @@ class Render {
       return
     }
     // 找出激活节点中的顶层节点列表，并过滤掉根节点
-    const nodeList = getTopAncestorsFomNodeList(this.activeNodeList).filter(
+    let nodeList = getTopAncestorsFomNodeList(this.activeNodeList).filter(
       node => {
         return !node.isRoot
       }
     )
+    nodeList = sortNodeList(nodeList)
     // 复制数据
     const copyData = nodeList.map(node => {
       return copyNodeTree({}, node, true)
@@ -1690,11 +1693,13 @@ class Render {
       )
     })
     const list = parseAddGeneralizationNodeList(nodeList)
+    if (list.length <= 0) return
     const isRichText = !!this.mindMap.richText
     const { focusNewNode, inserting } = this.getNewNodeBehavior(
       openEdit,
       list.length > 1
     )
+    let needRender = false
     list.forEach(item => {
       const newData = {
         inserting,
@@ -1708,15 +1713,30 @@ class Render {
         isActive: focusNewNode
       }
       let generalization = item.node.getData('generalization')
-      if (generalization) {
-        if (Array.isArray(generalization)) {
-          generalization.push(newData)
-        } else {
-          generalization = [generalization, newData]
+      generalization = generalization
+        ? Array.isArray(generalization)
+          ? generalization
+          : [generalization]
+        : []
+      // 如果是范围概要，那么检查该范围是否存在
+      if (item.range) {
+        const isExist = !!generalization.find(item2 => {
+          return (
+            item2.range &&
+            item2.range[0] === item.range[0] &&
+            item2.range[1] === item.range[1]
+          )
+        })
+        if (isExist) {
+          return
         }
+        // 不存在则添加
+        generalization.push(newData)
       } else {
-        generalization = [newData]
+        // 不是范围概要直接添加，因为前面已经判断过是否存在
+        generalization.push(newData)
       }
+      needRender = true
       this.mindMap.execCommand('SET_NODE_DATA', item.node, {
         generalization
       })
@@ -1725,6 +1745,7 @@ class Render {
         expand: true
       })
     })
+    if (!needRender) return
     // 需要清除原来激活的节点
     if (focusNewNode) {
       this.clearActiveNodeList()

@@ -23,6 +23,8 @@ export const defaultOpt = {
   mouseScaleCenterUseMousePosition: true,
   // 最多显示几个标签
   maxTag: 5,
+  // 标签显示的位置，相对于节点文本，bottom（下方）、right（右侧）
+  tagPosition: CONSTANTS.TAG_POSITION.RIGHT,
   // 展开收缩按钮尺寸
   expandBtnSize: 20,
   // 节点里图片和文字的间距
@@ -379,6 +381,12 @@ export const defaultOpt = {
   // 【Formula插件】
   // 是否开启在富文本编辑框中直接编辑数学公式
   enableEditFormulaInRichTextEdit: true,
+  // katex库的字体文件的请求路径。仅当katex的output配置为html时才会请求字体文件。可以通过mindMap.formula.getKatexConfig()方法来获取当前的配置
+  // 字体文件可以从node_modules中找到：katex/dist/fonts/。可以上传到你的服务器或cdn
+  // 最终的字体请求路径为`${katexFontPath}fonts/KaTeX_AMS-Regular.woff2`，可以自行拼接进行测试是否可以访问
+  katexFontPath: 'https://unpkg.com/katex@0.16.11/dist/',
+  // 自定义katex库的输出模式。默认当Chrome内核100以下会使用html方式，否则使用mathml方式，如果你有自己的规则，那么可以传递一个函数，函数返回值为：mathml或html
+  getKatexOutputType: null,
 
   // 【RichText插件】
   // 转换富文本内容，当进入富文本编辑时，可以通过该参数传递一个函数，函数接收文本内容，需要返回你处理后的文本内容
@@ -387,5 +395,9 @@ export const defaultOpt = {
   beforeHideRichTextEdit: null,
   // 设置富文本节点编辑框和节点大小一致，形成伪原地编辑的效果
   // 需要注意的是，只有当节点内只有文本、且形状是矩形才会有比较好的效果
-  richTextEditFakeInPlace: false
+  richTextEditFakeInPlace: false,
+
+  // 【OuterFrame】插件
+  outerFramePaddingX: 10,
+  outerFramePaddingY: 10
 }

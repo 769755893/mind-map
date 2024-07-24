@@ -1,6 +1,53 @@
 <template>
   <div>
     <h1>Changelog</h1>
+<h2>0.10.3</h2>
+<blockquote>
+<p>2024.7.19</p>
+</blockquote>
+<p>Updates that require special attention:</p>
+<p>1.Node tag data structure update</p>
+<p>The node tag data has been changed from a string array to an object array, mainly to support setting the style of a single tag. The current node tag data structure is as follows:</p>
+<pre class="hljs"><code>{
+     <span class="hljs-attr">tag</span>: [<span class="hljs-string">&#x27;tag&#x27;</span>]
+}
+</code></pre>
+<p>Change to the following:</p>
+<pre class="hljs"><code>{
+     <span class="hljs-attr">tag</span>: [
+          {
+               <span class="hljs-attr">text</span>: <span class="hljs-string">&#x27;tag&#x27;</span>,
+               <span class="hljs-attr">style</span>: {}
+          }
+     ]
+}
+</code></pre>
+<p>2.Related to mathematical formulas</p>
+<p>The mathematical formula plugin Formula defaults to importing styles from the Katex library, so there is no need to manually import them in the application. At the same time, the path of the Katex library font file needs to be configured through the katexFontPath instantiation option.</p>
+<p>Fix:</p>
+<blockquote>
+<p>1.Fix the issue where the isRoot and parent attributes of node instances obtained through methods customCreateNodeContent and createNodePrefixContent are both null;</p>
+<p>2.Fixed the issue where the last edited node would enter editing mode when zooming in and out of the canvas using the scroll wheel or shortcut keys after editing the node text, and the mind map shortcut keys would become invalid;</p>
+<p>3.Fixed the issue where multiple nodes can be selected simultaneously, allowing unlimited insertion of summaries;</p>
+</blockquote>
+<p>New:</p>
+<blockquote>
+<p>1.Modified the data type of the node tag field tag to support setting a single node tag style;</p>
+<p>2.Add instantiation options for displaying the location (Equivalent to node text) of node labels;</p>
+<p>3.Two callback parameters have been added to the node_tag_click event;</p>
+<p>4.When copying, cutting, or moving multiple nodes, operate them in the order they are on the nodes, rather than in the order they are activated;</p>
+<p>5.If a formula plugin is registered and there are formulas in the node, then when exporting SVG, it is necessary to add styles from the Katex library;</p>
+<p>6.Support instantiation options for custom katex library rendering modes;</p>
+<p>7.The formula plugin defaults to importing styles from the Katex library;</p>
+<p>8.Add instantiation options for custom katex library font file paths;</p>
+<p>9.Add instantiation options for setting the inner margin of the outer frame;</p>
+</blockquote>
+<p>Demo:</p>
+<blockquote>
+<p>1.Support clicking on node tags to modify text and color;</p>
+<p>2.Remove the logic of introducing formula library styles;</p>
+<p>3.Support configuring the inner margin of the outer frame;</p>
+</blockquote>
 <h2>0.10.2 / 0.10.2-fix.1</h2>
 <blockquote>
 <p>2024.7.3</p>

@@ -90,13 +90,7 @@ This project may not have fully tested every function point, so there may be bug
 
 If you have suggestions or find bugs, you can submit [issues](https://github.com/wanglin2/mind-map/issues) here.
 
-The built-in themes and icons in the project part come from:
-
-[Baidu Mind Map](https://naotu.baidu.com/)
-
-[Zhixi Mind Map](https://www.zhixi.com/)
-
-Respect the copyright, and do not use the theme and icons directly for commercial projects.
+The built-in themes and icons in the project part come from:[Baidu Mind Map](https://naotu.baidu.com/)、[Zhixi Mind Map](https://www.zhixi.com/)。Respect the copyright, and do not use the theme and icons directly for commercial projects.
 
 ## Why not？
 
@@ -439,5 +433,21 @@ Open source is not easy. If this project is helpful to you, you can invite the a
     <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
         <img src="../../../../assets/avatar/buddy.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
         <p>buddy</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/default.png" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>小川</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/Tobin.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>Tobin</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/夏虫不语冰.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>夏虫不语冰</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/晴空.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>晴空</p>
     </div>
 </div>

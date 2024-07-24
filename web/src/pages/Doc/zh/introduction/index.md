@@ -82,13 +82,7 @@
 
 如果有建议或发现了bug，可以在此提交[issues](https://github.com/wanglin2/mind-map/issues)。
 
-项目内置的主题和图标部分来自于：
-
-[百度脑图](https://naotu.baidu.com/)
-
-[知犀思维导图](https://www.zhixi.com/)
-
-尊重版权，主题和图标请勿直接用于商业项目。
+项目内置的主题和图标部分来自于：[百度脑图](https://naotu.baidu.com/)、[知犀思维导图](https://www.zhixi.com/)。尊重版权，主题和图标请勿直接用于商业项目。
 
 ## 为什么不是？
 
@@ -435,5 +429,21 @@
     <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
         <img src="../../../../assets/avatar/buddy.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
         <p>buddy</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/default.png" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>小川</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/Tobin.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>Tobin</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/夏虫不语冰.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>夏虫不语冰</p>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: fit-content; margin: 5px;">
+        <img src="../../../../assets/avatar/晴空.jpg" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;" />
+        <p>晴空</p>
     </div>
 </div>

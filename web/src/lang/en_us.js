@@ -65,7 +65,8 @@ export default {
     center: 'Center',
     edge: 'Edge',
     rainbowLines: 'Rainbow lines',
-    notUseRainbowLines: 'Not use rainbow lines'
+    notUseRainbowLines: 'Not use rainbow lines',
+    outerFramePadding: 'Outer frame padding'
   },
   color: {
     moreColor: 'More color'
@@ -373,5 +374,9 @@ export default {
     boxStyle: 'Box style',
     boxColor: 'Box color',
     fillColor: 'Fill color'
+  },
+  nodeTagStyle: {
+    placeholder: 'Please enter the tag content',
+    delete: 'Delete this tag'
   }
 }

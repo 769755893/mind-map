@@ -65,7 +65,8 @@ export default {
     center: '中心',
     edge: '边缘',
     rainbowLines: '彩虹线条',
-    notUseRainbowLines: '不使用彩虹线条'
+    notUseRainbowLines: '不使用彩虹线条',
+    outerFramePadding: '外框内边距'
   },
   color: {
     moreColor: '更多颜色'
@@ -365,5 +366,9 @@ export default {
     boxStyle: '边框样式',
     boxColor: '边框颜色',
     fillColor: '填充颜色'
+  },
+  nodeTagStyle: {
+    placeholder: '请输入标签内容',
+    delete: '删除此标签'
   }
 }
