@@ -1,4 +1,5 @@
 import { keyMap } from './keyMap'
+import { CONSTANTS } from '../../constants/constant'
 
 //  快捷按键、命令处理类
 export default class KeyCommand {
@@ -15,6 +16,18 @@ export default class KeyCommand {
     this.bindEvent()
   }
 
+  // 扩展按键映射
+  extendKeyMap(key, code) {
+    keyMap[key] = code
+  }
+
+  // 从按键映射中删除某个键
+  removeKeyMap(key) {
+    if (typeof keyMap[key] !== 'undefined') {
+      delete keyMap[key]
+    }
+  }
+
   //  暂停快捷键响应
   pause() {
     this.isPause = true
@@ -27,12 +40,20 @@ export default class KeyCommand {
 
   //  保存当前注册的快捷键数据，然后清空快捷键数据
   save() {
+    // 当前已经存在缓存数据了，那么直接返回
+    if (Object.keys(this.shortcutMapCache).length > 0) {
+      return
+    }
     this.shortcutMapCache = this.shortcutMap
     this.shortcutMap = {}
   }
 
   //  恢复保存的快捷键数据，然后清空缓存数据
   restore() {
+    // 当前不存在缓存数据，那么直接返回
+    if (Object.keys(this.shortcutMapCache).length <= 0) {
+      return
+    }
     this.shortcutMap = this.shortcutMapCache
     this.shortcutMapCache = {}
   }
@@ -65,13 +86,30 @@ export default class KeyCommand {
     window.removeEventListener('keydown', this.onKeydown)
   }
 
+  // 根据事件目标判断是否响应快捷键事件
+  defaultEnableCheck(e) {
+    const target = e.target
+    return (
+      target === document.body ||
+      target.classList.contains(CONSTANTS.EDIT_NODE_CLASS.SMM_NODE_EDIT_WRAP) ||
+      target.classList.contains(CONSTANTS.EDIT_NODE_CLASS.RICH_TEXT_EDIT_WRAP) || 
+      target.classList.contains(CONSTANTS.EDIT_NODE_CLASS.ASSOCIATIVE_LINE_TEXT_EDIT_WRAP)
+    )
+  }
+
   // 按键事件
   onKeydown(e) {
-    const { enableShortcutOnlyWhenMouseInSvg, beforeShortcutRun } = this.mindMap.opt
-    if (
-      this.isPause ||
-      (enableShortcutOnlyWhenMouseInSvg && !this.isInSvg)
-    ) {
+    const {
+      enableShortcutOnlyWhenMouseInSvg,
+      beforeShortcutRun,
+      customCheckEnableShortcut
+    } = this.mindMap.opt
+    const checkFn =
+      typeof customCheckEnableShortcut === 'function'
+        ? customCheckEnableShortcut
+        : this.defaultEnableCheck
+    if (!checkFn(e)) return
+    if (this.isPause || (enableShortcutOnlyWhenMouseInSvg && !this.isInSvg)) {
       return
     }
     Object.keys(this.shortcutMap).forEach(key => {
@@ -82,7 +120,9 @@ export default class KeyCommand {
           e.preventDefault()
         }
         if (typeof beforeShortcutRun === 'function') {
-          const isStop = beforeShortcutRun(key, [...this.mindMap.renderer.activeNodeList])
+          const isStop = beforeShortcutRun(key, [
+            ...this.mindMap.renderer.activeNodeList
+          ])
           if (isStop) return
         }
         this.shortcutMap[key].forEach(fn => {

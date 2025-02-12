@@ -208,19 +208,39 @@ export default {
       },
       fileTreeVisible: false,
       rootDirName: '',
-      fileTreeExpand: true
+      fileTreeExpand: true,
+      waitingWriteToLocalFile: false
     }
   },
   computed: {
     ...mapState({
       isDark: state => state.localConfig.isDark,
-      isHandleLocalFile: state => state.isHandleLocalFile
+      isHandleLocalFile: state => state.isHandleLocalFile,
+      openNodeRichText: state => state.localConfig.openNodeRichText
     })
   },
   watch: {
     isHandleLocalFile(val) {
       if (!val) {
         Notification.closeAll()
+      }
+    },
+    openNodeRichText: {
+      immediate: true,
+      handler(val) {
+        const index = this.list.findIndex(item => {
+          return item === 'formula'
+        })
+        if (val) {
+          if (index === -1) {
+            this.list.splice(13, 0, 'formula')
+          }
+        } else {
+          if (index !== -1) {
+            this.list.splice(index, 1)
+          }
+        }
+        this.computeToolbarShow()
       }
     }
   },
@@ -232,15 +252,20 @@ export default {
     this.computeToolbarShowThrottle = throttle(this.computeToolbarShow, 300)
     window.addEventListener('resize', this.computeToolbarShowThrottle)
     this.$bus.$on('lang_change', this.computeToolbarShowThrottle)
+    window.addEventListener('beforeunload', this.onUnload)
+    this.$bus.$on('node_note_dblclick', this.onNodeNoteDblclick)
   },
   beforeDestroy() {
     this.$bus.$off('write_local_file', this.onWriteLocalFile)
     window.removeEventListener('resize', this.computeToolbarShowThrottle)
     this.$bus.$off('lang_change', this.computeToolbarShowThrottle)
+    window.removeEventListener('beforeunload', this.onUnload)
+    this.$bus.$off('node_note_dblclick', this.onNodeNoteDblclick)
   },
   methods: {
     // 计算工具按钮如何显示
     computeToolbarShow() {
+      if (!this.$refs.toolbarRef) return
       const windowWidth = window.innerWidth - 40
       const all = [...this.list]
       let index = 1
@@ -269,9 +294,20 @@ export default {
     // 监听本地文件读写
     onWriteLocalFile(content) {
       clearTimeout(this.timer)
+      if (fileHandle && this.isHandleLocalFile) {
+        this.waitingWriteToLocalFile = true
+      }
       this.timer = setTimeout(() => {
         this.writeLocalFile(content)
       }, 1000)
+    },
+
+    onUnload(e) {
+      if (this.waitingWriteToLocalFile) {
+        const msg = '存在未保存的数据'
+        e.returnValue = msg
+        return msg
+      }
     },
 
     // 加载本地文件树
@@ -429,6 +465,7 @@ export default {
     // 写入本地文件
     async writeLocalFile(content) {
       if (!fileHandle || !this.isHandleLocalFile) {
+        this.waitingWriteToLocalFile = false
         return
       }
       if (!this.isFullDataFile) {
@@ -438,6 +475,7 @@ export default {
       const writable = await fileHandle.createWritable()
       await writable.write(string)
       await writable.close()
+      this.waitingWriteToLocalFile = false
     },
 
     // 创建本地文件
@@ -485,6 +523,11 @@ export default {
         }
         this.$message.warning(this.$t('toolbar.notSupportTip'))
       }
+    },
+
+    onNodeNoteDblclick(node, e) {
+      e.stopPropagation()
+      this.$bus.$emit('showNodeNote', node)
     }
   }
 }

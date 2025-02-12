@@ -10,9 +10,10 @@
         <div class="title noTop">{{ $t('style.text') }}</div>
         <div class="row">
           <div class="rowItem">
-            <span class="name">{{ $t('style.fontFamily') }}</span>
+            <!-- <span class="name">{{ $t('style.fontFamily') }}</span> -->
             <el-select
               size="mini"
+              style="width: 100px"
               v-model="style.fontFamily"
               placeholder=""
               @change="update('fontFamily')"
@@ -27,13 +28,11 @@
               </el-option>
             </el-select>
           </div>
-        </div>
-        <div class="row">
           <div class="rowItem">
-            <span class="name">{{ $t('style.fontSize') }}</span>
+            <!-- <span class="name">{{ $t('style.fontSize') }}</span> -->
             <el-select
               size="mini"
-              style="width: 80px"
+              style="width: 60px"
               v-model="style.fontSize"
               placeholder=""
               @change="update('fontSize')"
@@ -49,19 +48,18 @@
             </el-select>
           </div>
           <div class="rowItem">
-            <span class="name">{{ $t('style.lineHeight') }}</span>
             <el-select
               size="mini"
               style="width: 80px"
-              v-model="style.lineHeight"
+              v-model="style.textAlign"
               placeholder=""
-              @change="update('lineHeight')"
+              @change="update('textAlign')"
             >
               <el-option
-                v-for="item in lineHeightList"
-                :key="item"
-                :label="item"
-                :value="item"
+                v-for="item in alignList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"
               >
               </el-option>
             </el-select>
@@ -247,16 +245,16 @@
             <el-popover ref="popover4" placement="bottom" trigger="hover">
               <Color :color="style.fillColor" @change="changeFillColor"></Color>
             </el-popover>
-          </div>
-        </div>
-        <div class="row">
-          <div class="rowItem">
-            <span class="name">{{ $t('style.gradientStyle') }}</span>
+            <span class="name" style="margin-left: 20px;">{{
+              $t('style.gradientStyle')
+            }}</span>
             <el-checkbox
               v-model="style.gradientStyle"
               @change="update('gradientStyle')"
             ></el-checkbox>
           </div>
+        </div>
+        <div class="row" v-if="style.gradientStyle">
           <div class="rowItem">
             <span class="name">{{ $t('style.startColor') }}</span>
             <span
@@ -281,6 +279,24 @@
             <el-popover ref="popover7" placement="bottom" trigger="hover">
               <Color :color="style.endColor" @change="changeEndColor"></Color>
             </el-popover>
+          </div>
+          <div class="rowItem">
+            <span class="name">{{ $t('style.direction') }}</span>
+            <el-select
+              size="mini"
+              style="width: 80px"
+              v-model="style.linearGradientDir"
+              placeholder=""
+              @change="update('linearGradientDir')"
+            >
+              <el-option
+                v-for="item in linearGradientDirList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
           </div>
         </div>
         <!-- 形状 -->
@@ -416,6 +432,49 @@
             </el-select>
           </div>
         </div>
+        <!-- 流动效果 -->
+        <div class="row" v-if="supportLineFlow">
+          <div class="rowItem">
+            <span class="name">{{ $t('style.openLineFlow') }}</span>
+            <el-checkbox
+              v-model="style.lineFlow"
+              @change="update('lineFlow')"
+            ></el-checkbox>
+          </div>
+          <div class="rowItem">
+            <span class="name">{{ $t('style.direction') }}</span>
+            <el-select
+              size="mini"
+              style="width: 80px"
+              v-model="style.lineFlowForward"
+              placeholder=""
+              @change="update('lineFlowForward')"
+            >
+              <el-option
+                key="1"
+                :label="$t('style.forward')"
+                :value="true"
+              ></el-option>
+              <el-option
+                key="2"
+                :label="$t('style.reverse')"
+                :value="false"
+              ></el-option>
+            </el-select>
+          </div>
+        </div>
+        <div class="row" v-if="supportLineFlow">
+          <div class="rowItem">
+            <span class="name">{{ $t('style.lineFlowDuration') }}</span>
+            <el-input-number
+              v-model="style.lineFlowDuration"
+              @change="update('lineFlowDuration')"
+              :min="0.1"
+              size="mini"
+              :step="0.5"
+            ></el-input-number>
+          </div>
+        </div>
         <!-- 节点内边距 -->
         <div class="title noTop">{{ $t('style.nodePadding') }}</div>
         <div class="row">
@@ -438,11 +497,55 @@
             ></el-slider>
           </div>
         </div>
+        <!-- 节点图片布局 -->
+        <div class="title noTop">{{ $t('style.img') }}</div>
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('style.placement') }}</span>
+            <el-radio-group
+              v-model="style.imgPlacement"
+              size="mini"
+              @change="update('imgPlacement')"
+            >
+              <el-radio-button label="top">{{
+                $t('style.top')
+              }}</el-radio-button>
+              <el-radio-button label="bottom">{{
+                $t('style.bottom')
+              }}</el-radio-button>
+              <el-radio-button label="left">{{
+                $t('style.left')
+              }}</el-radio-button>
+              <el-radio-button label="right">{{
+                $t('style.right')
+              }}</el-radio-button>
+            </el-radio-group>
+          </div>
+        </div>
+        <!-- 节点标签布局 -->
+        <div class="title noTop">{{ $t('style.tag') }}</div>
+        <div class="row">
+          <div class="rowItem">
+            <span class="name">{{ $t('style.placement') }}</span>
+            <el-radio-group
+              v-model="style.tagPlacement"
+              size="mini"
+              @change="update('tagPlacement')"
+            >
+              <el-radio-button label="right">{{
+                $t('style.right')
+              }}</el-radio-button>
+              <el-radio-button label="bottom">{{
+                $t('style.bottom')
+              }}</el-radio-button>
+            </el-radio-group>
+          </div>
+        </div>
       </div>
     </div>
     <div class="tipBox" v-else>
       <div class="tipIcon iconfont icontianjiazijiedian"></div>
-      <div class="tipText">请选择一个节点</div>
+      <div class="tipText">{{ $t('style.selectNodeTip') }}</div>
     </div>
   </Sidebar>
 </template>
@@ -456,9 +559,10 @@ import {
   borderWidthList,
   borderDasharrayList,
   borderRadiusList,
-  lineHeightList,
   shapeList,
-  shapeListMap
+  shapeListMap,
+  linearGradientDirList,
+  alignList
 } from '@/config'
 import { mapState } from 'vuex'
 
@@ -478,7 +582,6 @@ export default {
       fontSizeList,
       borderWidthList,
       borderRadiusList,
-      lineHeightList,
       activeNodes: [],
       style: {
         shape: '',
@@ -487,7 +590,6 @@ export default {
         color: '',
         fontFamily: '',
         fontSize: '',
-        lineHeight: '',
         textDecoration: '',
         fontWeight: '',
         fontStyle: '',
@@ -502,14 +604,22 @@ export default {
         lineMarkerDir: '',
         gradientStyle: false,
         startColor: '',
-        endColor: ''
+        endColor: '',
+        linearGradientDir: '',
+        lineFlow: false,
+        lineFlowForward: true,
+        lineFlowDuration: 1,
+        textAlign: '',
+        imgPlacement: '',
+        tagPlacement: ''
       }
     }
   },
   computed: {
     ...mapState({
       isDark: state => state.localConfig.isDark,
-      activeSidebar: state => state.activeSidebar
+      activeSidebar: state => state.activeSidebar,
+      supportLineFlow: state => state.supportLineFlow
     }),
     fontFamilyList() {
       return fontFamilyList[this.$i18n.locale] || fontFamilyList.zh
@@ -522,6 +632,14 @@ export default {
     },
     shapeListMap() {
       return shapeListMap[this.$i18n.locale] || shapeListMap.zh
+    },
+    linearGradientDirList() {
+      return (
+        linearGradientDirList[this.$i18n.locale] || linearGradientDirList.zh
+      )
+    },
+    alignList() {
+      return alignList[this.$i18n.locale] || alignList.zh
     }
   },
   watch: {
@@ -561,32 +679,27 @@ export default {
       if (this.activeNodes.length <= 0) {
         return
       }
-      ;[
-        'shape',
-        'paddingX',
-        'paddingY',
-        'color',
-        'fontFamily',
-        'fontSize',
-        'lineHeight',
-        'textDecoration',
-        'fontWeight',
-        'fontStyle',
-        'borderWidth',
-        'borderColor',
-        'fillColor',
-        'borderDasharray',
-        'borderRadius',
-        'lineColor',
-        'lineDasharray',
-        'lineWidth',
-        'lineMarkerDir',
-        'gradientStyle',
-        'startColor',
-        'endColor'
-      ].forEach(item => {
+      Object.keys(this.style).forEach(item => {
         this.style[item] = this.activeNodes[0].getStyle(item, false)
       })
+      this.initLinearGradientDir()
+    },
+
+    // 初始化渐变方向样式
+    initLinearGradientDir() {
+      const startDir = this.activeNodes[0].getStyle('startDir', false)
+      const endDir = this.activeNodes[0].getStyle('endDir', false)
+      const target = this.linearGradientDirList.find(item => {
+        return (
+          item.start[0] === startDir[0] &&
+          item.start[1] === startDir[1] &&
+          item.end[0] === endDir[0] &&
+          item.end[1] === endDir[1]
+        )
+      })
+      if (target) {
+        this.style.linearGradientDir = target.value
+      }
     },
 
     /**
@@ -595,9 +708,21 @@ export default {
      * @Desc: 修改样式
      */
     update(prop) {
-      this.activeNodes.forEach(node => {
-        node.setStyle(prop, this.style[prop])
-      })
+      if (prop === 'linearGradientDir') {
+        const target = this.linearGradientDirList.find(item => {
+          return item.value === this.style.linearGradientDir
+        })
+        this.activeNodes.forEach(node => {
+          node.setStyles({
+            startDir: [...target.start],
+            endDir: [...target.end]
+          })
+        })
+      } else {
+        this.activeNodes.forEach(node => {
+          node.setStyle(prop, this.style[prop])
+        })
+      }
     },
 
     /**

@@ -39,6 +39,7 @@
         <span class="name">{{ $t('contextmenu.insertSummary') }}</span>
         <span class="desc">Ctrl + G</span>
       </div>
+      <div class="splitLine"></div>
       <div
         class="item"
         @click="exec('UP_NODE')"
@@ -55,6 +56,48 @@
         <span class="name">{{ $t('contextmenu.moveDownNode') }}</span>
         <span class="desc">Ctrl + ↓</span>
       </div>
+      <div class="item" @click="exec('UNEXPAND_ALL')">
+        <span class="name">{{ $t('contextmenu.unExpandNodeChild') }}</span>
+      </div>
+      <div class="item" @click="exec('EXPAND_ALL')">
+        <span class="name">{{ $t('contextmenu.expandNodeChild') }}</span>
+      </div>
+      <div class="item" v-if="supportNumbers">
+        <span class="name">{{ $t('contextmenu.number') }}</span>
+        <span class="el-icon-arrow-right"></span>
+        <div
+          class="subItems listBox"
+          :class="{ isDark: isDark, showLeft: subItemsShowLeft }"
+          style="top: -170px"
+        >
+          <div
+            class="item"
+            v-for="item in numberTypeList"
+            :key="'type' + item.value"
+            @click="setNodeNumber('type', item.value)"
+          >
+            <span class="name">{{ item.name }}</span>
+            {{ numberType === item.value ? '√' : '' }}
+          </div>
+          <div class="splitLine"></div>
+          <div
+            class="item"
+            v-for="item in numberLevelList"
+            :key="'level' + item.value"
+            :class="{ disabled: numberType === '' }"
+            @click="setNodeNumber('level', item.value)"
+          >
+            <span class="name">{{ item.name }}</span>
+            {{ numberLevel === item.value ? '√' : '' }}
+          </div>
+        </div>
+      </div>
+      <div class="item" @click="setCheckbox" v-if="supportCheckbox">
+        <span class="name">{{
+          hasCheckbox ? $t('contextmenu.removeToDo') : $t('contextmenu.addToDo')
+        }}</span>
+      </div>
+      <div class="splitLine"></div>
       <div class="item danger" @click="exec('REMOVE_NODE')">
         <span class="name">{{ $t('contextmenu.deleteNode') }}</span>
         <span class="desc">Delete</span>
@@ -63,6 +106,7 @@
         <span class="name">{{ $t('contextmenu.deleteCurrentNode') }}</span>
         <span class="desc">Shift + Backspace</span>
       </div>
+      <div class="splitLine"></div>
       <div
         class="item"
         @click="exec('COPY_NODE')"
@@ -83,6 +127,7 @@
         <span class="name">{{ $t('contextmenu.pasteNode') }}</span>
         <span class="desc">Ctrl + V</span>
       </div>
+      <div class="splitLine"></div>
       <div class="item" @click="exec('REMOVE_HYPERLINK')" v-if="hasHyperlink">
         <span class="name">{{ $t('contextmenu.removeHyperlink') }}</span>
       </div>
@@ -101,6 +146,7 @@
         <span class="name">{{ $t('contextmenu.backCenter') }}</span>
         <span class="desc">Ctrl + Enter</span>
       </div>
+      <div class="splitLine"></div>
       <div class="item" @click="exec('EXPAND_ALL')">
         <span class="name">{{ $t('contextmenu.expandAll') }}</span>
       </div>
@@ -110,7 +156,11 @@
       <div class="item">
         <span class="name">{{ $t('contextmenu.expandTo') }}</span>
         <span class="el-icon-arrow-right"></span>
-        <div class="subItems listBox" :class="{ isDark: isDark }">
+        <div
+          class="subItems listBox"
+          :class="{ isDark: isDark, showLeft: subItemsShowLeft }"
+          style="top: -10px"
+        >
           <div
             class="item"
             v-for="(item, index) in expandList"
@@ -121,6 +171,7 @@
           </div>
         </div>
       </div>
+      <div class="splitLine"></div>
       <div class="item" @click="exec('RESET_LAYOUT')">
         <span class="name">{{ $t('contextmenu.arrangeLayout') }}</span>
         <span class="desc">Ctrl + L</span>
@@ -133,6 +184,7 @@
         <span class="name">{{ $t('contextmenu.zenMode') }}</span>
         {{ isZenMode ? '√' : '' }}
       </div>
+      <div class="splitLine"></div>
       <div class="item" @click="exec('REMOVE_ALL_NODE_CUSTOM_STYLES')">
         <span class="name">{{
           $t('contextmenu.removeAllNodeCustomStyles')
@@ -141,7 +193,11 @@
       <div class="item">
         <span class="name">{{ $t('contextmenu.copyToClipboard') }}</span>
         <span class="el-icon-arrow-right"></span>
-        <div class="subItems listBox" :class="{ isDark: isDark }">
+        <div
+          class="subItems listBox"
+          :class="{ isDark: isDark, showLeft: subItemsShowLeft }"
+          style="top: -130px"
+        >
           <div
             class="item"
             v-for="item in copyList"
@@ -162,6 +218,7 @@ import { getTextFromHtml, imgToDataUrl } from 'simple-mind-map/src/utils'
 import { transformToMarkdown } from 'simple-mind-map/src/parse/toMarkdown'
 import { transformToTxt } from 'simple-mind-map/src/parse/toTxt'
 import { setDataToClipboard, setImgToClipboard, copy } from '@/utils'
+import { numberTypeList, numberLevelList } from '@/config'
 
 /**
  * @Author: 王林
@@ -185,13 +242,18 @@ export default {
       isMousedown: false,
       mosuedownX: 0,
       mosuedownY: 0,
-      enableCopyToClipboardApi: navigator.clipboard
+      enableCopyToClipboardApi: navigator.clipboard,
+      numberType: '',
+      numberLevel: '',
+      subItemsShowLeft: false
     }
   },
   computed: {
     ...mapState({
       isZenMode: state => state.localConfig.isZenMode,
-      isDark: state => state.localConfig.isDark
+      isDark: state => state.localConfig.isDark,
+      supportNumbers: state => state.supportNumbers,
+      supportCheckbox: state => state.supportCheckbox
     }),
     expandList() {
       return [
@@ -263,6 +325,15 @@ export default {
     },
     hasNote() {
       return !!this.node.getData('note')
+    },
+    numberTypeList() {
+      return numberTypeList[this.$i18n.locale] || numberTypeList.zh
+    },
+    numberLevelList() {
+      return numberLevelList[this.$i18n.locale] || numberLevelList.zh
+    },
+    hasCheckbox() {
+      return !!this.node.getData('checkbox')
     }
   },
   created() {
@@ -292,6 +363,7 @@ export default {
       if (x + rect.width > window.innerWidth) {
         x = x - rect.width - 20
       }
+      this.subItemsShowLeft = x + rect.width + 150 > window.innerWidth
       if (y + rect.height > window.innerHeight) {
         y = window.innerHeight - rect.height - 10
       }
@@ -303,6 +375,11 @@ export default {
       this.type = 'node'
       this.isShow = true
       this.node = node
+      const number = this.node.getData('number')
+      if (number) {
+        this.numberType = number.type || 1
+        this.numberLevel = number.level === '' ? 1 : number.level
+      }
       this.$nextTick(() => {
         const { x, y } = this.getShowPosition(e.clientX + 10, e.clientY + 10)
         this.left = x
@@ -353,6 +430,9 @@ export default {
       this.left = -9999
       this.top = -9999
       this.type = ''
+      this.node = ''
+      this.numberType = ''
+      this.numberLevel = ''
     },
 
     // 执行命令
@@ -396,10 +476,56 @@ export default {
             this.node
           )
           break
+        case 'UNEXPAND_ALL':
+          const uid = this.node ? this.node.uid : ''
+          this.$bus.$emit('execCommand', key, !uid, uid)
+          break
+        case 'EXPAND_ALL':
+          this.$bus.$emit('execCommand', key, this.node ? this.node.uid : '')
+          break
         default:
           this.$bus.$emit('execCommand', key, ...args)
           break
       }
+      this.hide()
+    },
+
+    // 设置节点编号
+    setNodeNumber(prop, value) {
+      if (prop === 'type') {
+        this.numberType = value
+        if (value === '') {
+          // 无编号
+          this.numberLevel = ''
+          this.mindMap.execCommand('SET_NUMBER', [], null)
+          return
+        } else {
+          // 有编号
+          if (this.numberLevel === '') {
+            this.numberLevel = 1
+          }
+        }
+      }
+      if (prop === 'level') {
+        this.numberLevel = value
+      }
+      this.mindMap.execCommand('SET_NUMBER', [], {
+        [prop]: value
+      })
+      this.hide()
+    },
+
+    // 设置待办
+    setCheckbox() {
+      this.mindMap.execCommand(
+        'SET_CHECKBOX',
+        [],
+        this.hasCheckbox
+          ? null
+          : {
+              done: false
+            }
+      )
       this.hide()
     },
 
@@ -478,6 +604,13 @@ export default {
     }
   }
 
+  .splitLine {
+    width: 95%;
+    height: 1px;
+    background-color: #e9edf2;
+    margin: 2px auto;
+  }
+
   .item {
     position: relative;
     height: 28px;
@@ -525,9 +658,13 @@ export default {
     .subItems {
       position: absolute;
       left: 100%;
-      top: 0;
       visibility: hidden;
       width: 150px;
+      cursor: auto;
+
+      &.showLeft {
+        left: -150px;
+      }
     }
   }
 }

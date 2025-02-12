@@ -1,30 +1,13 @@
 import exampleData from 'simple-mind-map/example/exampleData'
 import { simpleDeepClone } from 'simple-mind-map/src/utils/index'
 import Vue from 'vue'
+import vuexStore from '@/store'
 
 const SIMPLE_MIND_MAP_DATA = 'SIMPLE_MIND_MAP_DATA'
 const SIMPLE_MIND_MAP_LANG = 'SIMPLE_MIND_MAP_LANG'
 const SIMPLE_MIND_MAP_LOCAL_CONFIG = 'SIMPLE_MIND_MAP_LOCAL_CONFIG'
 
 let mindMapData = null
-
-/**
- * @Author: 王林
- * @Date: 2021-08-02 22:36:48
- * @Desc: 克隆思维导图数据，去除激活状态
- */
-const copyMindMapTreeData = (tree, root) => {
-  if (!root) return null
-  tree.data = simpleDeepClone(root.data)
-  // tree.data.isActive = false
-  tree.children = []
-  if (root.children && root.children.length > 0) {
-    root.children.forEach((item, index) => {
-      tree.children[index] = copyMindMapTreeData({}, item)
-    })
-  }
-  return tree
-}
 
 /**
  * @Author: 王林
@@ -35,6 +18,9 @@ export const getData = () => {
   if (window.takeOverApp) {
     mindMapData = window.takeOverAppMethods.getMindMapData()
     return mindMapData
+  }
+  if (vuexStore.state.isHandleLocalFile) {
+    return Vue.prototype.getCurrentData()
   }
   let store = localStorage.getItem(SIMPLE_MIND_MAP_DATA)
   if (store === null) {
@@ -61,13 +47,16 @@ export const storeData = data => {
     } else {
       originData = getData()
     }
-    originData.root = copyMindMapTreeData({}, data)
+    originData.root = data
     if (window.takeOverApp) {
       mindMapData = originData
       window.takeOverAppMethods.saveMindMapData(originData)
       return
     }
     Vue.prototype.$bus.$emit('write_local_file', originData)
+    if (vuexStore.state.isHandleLocalFile) {
+      return
+    }
     let dataStr = JSON.stringify(originData)
     localStorage.setItem(SIMPLE_MIND_MAP_DATA, dataStr)
   } catch (error) {
@@ -98,6 +87,9 @@ export const storeConfig = config => {
       return
     }
     Vue.prototype.$bus.$emit('write_local_file', originData)
+    if (vuexStore.state.isHandleLocalFile) {
+      return
+    }
     let dataStr = JSON.stringify(originData)
     localStorage.setItem(SIMPLE_MIND_MAP_DATA, dataStr)
   } catch (error) {

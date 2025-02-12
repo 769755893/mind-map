@@ -57,9 +57,6 @@ export const fontFamilyList = [
 // 字号
 export const fontSizeList = [10, 12, 16, 18, 24, 32, 48]
 
-// 行高
-export const lineHeightList = [1, 1.5, 2, 2.5, 3]
-
 // 颜色
 export const colorList = [
   '#4D4D4D',
@@ -133,6 +130,10 @@ export const borderDasharrayList = [
   {
     name: '虚线6',
     value: '1, 5'
+  },
+  {
+    name: '虚线7',
+    value: '6, 4'
   }
 ]
 
@@ -143,9 +144,9 @@ export const borderRadiusList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 export const lineWidthList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 export const lineStyleMap = {
-  straight: `<svg width="60" height="26"><path d="M18,14L30,14L30,5L42,5" fill="none" stroke="#000" stroke-width="2"></path><path d="M18,14L30,14L30,23L42,23" fill="none" stroke="#000" stroke-width="2"></path></svg>`,
-  curve: `<svg width="60" height="26"><path d="M18,14L30,14A12,-9 0 0 1 42,5" fill="none" stroke="#000" stroke-width="2"></path><path d="M18,14L30,14A12,9 0 0 0 42,23" fill="none" stroke="#000" stroke-width="2"></path></svg>`,
-  direct: `<svg width="60" height="26"><path d="M18,14L30,14L42,5" fill="none" stroke="#000" stroke-width="2"></path><path d="M18,14L30,14L42,23" fill="none" stroke="#000" stroke-width="2"></path></svg>`
+  straight: `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="60" height="26"><path d="M18,14L30,14L30,5L42,5" fill="none" stroke="#000" stroke-width="2"></path><path d="M18,14L30,14L30,23L42,23" fill="none" stroke="#000" stroke-width="2"></path></svg>`,
+  curve: `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="60" height="26"><path d="M18,14L30,14A12,-9 0 0 1 42,5" fill="none" stroke="#000" stroke-width="2"></path><path d="M18,14L30,14A12,9 0 0 0 42,23" fill="none" stroke="#000" stroke-width="2"></path></svg>`,
+  direct: `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="60" height="26"><path d="M18,14L30,14L42,5" fill="none" stroke="#000" stroke-width="2"></path><path d="M18,14L30,14L42,23" fill="none" stroke="#000" stroke-width="2"></path></svg>`
 }
 
 // 连线风格
@@ -497,6 +498,10 @@ export const langList = [
     name: '简体中文'
   },
   {
+    value: 'zhtw',
+    name: '繁體中文'
+  },
+  {
     value: 'en',
     name: 'English'
   }
@@ -528,6 +533,11 @@ export const sidebarTriggerList = [
     name: '大纲',
     value: 'outline',
     icon: 'iconfuhao-dagangshu'
+  },
+  {
+    name: '设置',
+    value: 'setting',
+    icon: 'iconshezhi'
   },
   {
     name: '快捷键',
@@ -585,5 +595,145 @@ export const downTypeList = [
     type: 'txt',
     icon: 'iconTXT',
     desc: '纯文本文件'
+  },
+  {
+    name: 'FreeMind',
+    type: 'mm',
+    icon: 'iconfreemind',
+    desc: 'FreeMind软件格式'
+  },
+  {
+    name: 'Excel',
+    type: 'xlsx',
+    icon: 'iconfile-excel',
+    desc: 'Excel软件格式'
+  }
+]
+
+// 编号类型列表
+export const numberTypeList = [
+  {
+    name: '无编号',
+    value: ''
+  },
+  {
+    name: '1, 2, 3',
+    value: 1
+  },
+  {
+    name: '1., 2., 3.',
+    value: 2
+  },
+  {
+    name: '(1), (2), (3)',
+    value: 3
+  },
+  {
+    name: 'a., b., c.',
+    value: 4
+  },
+  {
+    name: 'A., B., C.',
+    value: 5
+  },
+  {
+    name: 'i., ii., iii.',
+    value: 6
+  },
+  {
+    name: 'I., II., III.',
+    value: 7
+  },
+  {
+    name: '一、, 二、, 三、',
+    value: 8
+  }
+]
+
+// 编号层级列表
+export const numberLevelList = [
+  {
+    name: '编号首层',
+    value: 1
+  },
+  {
+    name: '编号前两层',
+    value: 2
+  },
+  {
+    name: '编号前三层',
+    value: 3
+  },
+  {
+    name: '编号所有层',
+    value: 0
+  }
+]
+
+// 背景渐变方向
+export const linearGradientDirList = [
+  {
+    name: '从左到右',
+    value: '1',
+    start: [0, 0],
+    end: [1, 0]
+  },
+  {
+    name: '从右到左',
+    value: '2',
+    start: [1, 0],
+    end: [0, 0]
+  },
+  {
+    name: '从上到下',
+    value: '3',
+    start: [0, 0],
+    end: [0, 1]
+  },
+  {
+    name: '从下到上',
+    value: '4',
+    start: [0, 1],
+    end: [0, 0]
+  },
+  {
+    name: '从左上到右下',
+    value: '5',
+    start: [0, 0],
+    end: [1, 1]
+  },
+  {
+    name: '从左下到右上',
+    value: '6',
+    start: [0, 1],
+    end: [1, 0]
+  },
+  {
+    name: '从右上到左下',
+    value: '7',
+    start: [1, 0],
+    end: [0, 1]
+  },
+  {
+    name: '从右下到左上',
+    value: '8',
+    start: [1, 1],
+    end: [0, 0]
+  }
+]
+
+// 文本对齐方式
+export const alignList = [
+  {
+    name: '左对齐',
+    value: 'left'
+  },
+  {
+    name: '居中对齐',
+    value: 'center'
+  },
+  {
+    name: '右对齐',
+    value: 'right'
   }
 ]

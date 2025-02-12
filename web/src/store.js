@@ -29,7 +29,13 @@ const store = new Vuex.Store({
     isSourceCodeEdit: false, // 是否是源码编辑模式
     extraTextOnExport: '', // 导出时底部添加的文字
     supportHandDrawnLikeStyle: false, // 是否支持设置手绘风格
-    supportMark: false // 是否支持标记
+    supportMark: false, // 是否支持标记
+    supportNumbers: false, // 是否支持编号
+    supportFreemind: false, // 是否支持Freemind插件
+    supportExcel: false, // 是否支持Excel插件
+    supportCheckbox: false, // 是否支持Checkbox插件
+    supportLineFlow: false, // 是否支持LineFlow插件
+    isDragOutlineTreeNode: false // 当前是否正在拖拽大纲树的节点
   },
   mutations: {
     // 设置思维导图数据
@@ -84,6 +90,36 @@ const store = new Vuex.Store({
     // 设置是否支持标记
     setSupportMark(state, data) {
       state.supportMark = data
+    },
+
+    // 设置是否支持编号
+    setSupportNumbers(state, data) {
+      state.supportNumbers = data
+    },
+
+    // 设置是否支持Freemind插件
+    setSupportFreemind(state, data) {
+      state.supportFreemind = data
+    },
+
+    // 设置是否支持Excel插件
+    setSupportExcel(state, data) {
+      state.supportExcel = data
+    },
+
+    // 设置是否支持Checkbox插件
+    setSupportCheckbox(state, data) {
+      state.supportCheckbox = data
+    },
+
+    // 设置是否支持Lineflow插件
+    setSupportLineFlow(state, data) {
+      state.supportLineFlow = data
+    },
+
+    // 设置树节点拖拽
+    setIsDragOutlineTreeNode(state, data) {
+      state.isDragOutlineTreeNode = data
     }
   },
   actions: {

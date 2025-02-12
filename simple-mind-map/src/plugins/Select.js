@@ -41,7 +41,8 @@ class Select {
 
   // 鼠标按下
   onMousedown(e) {
-    if (this.mindMap.opt.readonly) {
+    const { readonly, mousedownEventPreventDefault } = this.mindMap.opt
+    if (readonly) {
       return
     }
     let { useLeftKeySelectionRightKeyDrag } = this.mindMap.opt
@@ -51,7 +52,9 @@ class Select {
     ) {
       return
     }
-    e.preventDefault()
+    if (mousedownEventPreventDefault) {
+      e.preventDefault()
+    }
     this.isMousedown = true
     this.cacheActiveList = [...this.mindMap.renderer.activeNodeList]
     let { x, y } = this.mindMap.toPos(e.clientX, e.clientY)
@@ -180,7 +183,8 @@ class Select {
     let miny = Math.min(this.mouseDownY, this.mouseMoveY)
     let maxx = Math.max(this.mouseDownX, this.mouseMoveX)
     let maxy = Math.max(this.mouseDownY, this.mouseMoveY)
-    bfsWalk(this.mindMap.renderer.root, node => {
+
+    const check = node => {
       let { left, top, width, height } = node
       let right = (left + width) * scaleX + translateX
       let bottom = (top + height) * scaleY + translateY
@@ -200,6 +204,16 @@ class Select {
         }
         this.mindMap.renderer.removeNodeFromActiveList(node)
         this.mindMap.renderer.emitNodeActiveEvent()
+      }
+    }
+
+    bfsWalk(this.mindMap.renderer.root, node => {
+      check(node)
+      // 概要节点
+      if (node._generalizationList && node._generalizationList.length > 0) {
+        node._generalizationList.forEach(item => {
+          check(item.generalizationNode)
+        })
       }
     })
   }

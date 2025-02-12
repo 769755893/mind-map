@@ -6,6 +6,7 @@ import {
   transformTreeDataToObject
 } from '../../utils'
 import { ERROR_TYPES } from '../../constants/constant'
+import pkg from '../../../package.json'
 
 //  命令类
 class Command {
@@ -18,6 +19,7 @@ class Command {
     this.activeHistoryIndex = 0
     // 注册快捷键
     this.registerShortcutKeys()
+    this.originAddHistory = this.addHistory.bind(this)
     this.addHistory = throttle(
       this.addHistory,
       this.mindMap.opt.addHistoryTime,
@@ -60,6 +62,7 @@ class Command {
       this.commands[name].forEach(fn => {
         fn(...args)
       })
+      this.mindMap.emit('afterExecCommand', name, ...args)
       if (
         ['BACK', 'FORWARD', 'SET_NODE_ACTIVE', 'CLEAR_ACTIVE_NODE'].includes(
           name
@@ -104,7 +107,7 @@ class Command {
       return
     }
     const lastData =
-      this.history.length > 0 ? this.history[this.history.length - 1] : null
+      this.history.length > 0 ? this.history[this.activeHistoryIndex] : null
     const data = this.getCopyData()
     // 此次数据和上次一样则不重复添加
     if (lastData === data) return
@@ -143,7 +146,6 @@ class Command {
       )
       const data = simpleDeepClone(this.history[this.activeHistoryIndex])
       this.emitDataUpdatesEvent(lastData, data)
-      this.mindMap.emit('data_change', data)
       return data
     }
   }
@@ -164,7 +166,6 @@ class Command {
       )
       const data = simpleDeepClone(this.history[this.activeHistoryIndex])
       this.emitDataUpdatesEvent(lastData, data)
-      this.mindMap.emit('data_change', data)
       return data
     }
   }
@@ -172,7 +173,9 @@ class Command {
   //  获取渲染树数据副本
   getCopyData() {
     if (!this.mindMap.renderer.renderTree) return null
-    return copyRenderTree({}, this.mindMap.renderer.renderTree, true)
+    const res = copyRenderTree({}, this.mindMap.renderer.renderTree, true)
+    res.smmVersion = pkg.version
+    return res
   }
 
   // 移除节点数据中的uid

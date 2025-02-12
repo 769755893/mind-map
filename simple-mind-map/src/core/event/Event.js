@@ -99,7 +99,6 @@ class Event extends EventEmitter {
 
   //  鼠标按下事件
   onMousedown(e) {
-    e.preventDefault()
     // 鼠标左键
     if (e.which === 1) {
       this.isLeftMousedown = true
@@ -115,7 +114,6 @@ class Event extends EventEmitter {
 
   //  鼠标移动事件
   onMousemove(e) {
-    e.preventDefault()
     let { useLeftKeySelectionRightKeyDrag } = this.mindMap.opt
     this.mousemovePos.x = e.clientX
     this.mousemovePos.y = e.clientY
@@ -158,8 +156,14 @@ class Event extends EventEmitter {
     // 判断是否是触控板
     let isTouchPad = false
     // mac、windows
-    if (e.wheelDeltaY === e.deltaY * -3 || Math.abs(e.wheelDeltaY) <= 10) {
-      isTouchPad = true
+    // if (e.wheelDeltaY === e.deltaY * -3 || Math.abs(e.wheelDeltaY) <= 10) {
+    //   isTouchPad = true
+    // }
+    const { customCheckIsTouchPad } = this.mindMap.opt
+    if (typeof customCheckIsTouchPad === 'function') {
+      isTouchPad = customCheckIsTouchPad(e)
+    } else {
+      isTouchPad = Math.abs(e.deltaY) <= 10
     }
     this.emit('mousewheel', e, dirs, this, isTouchPad)
   }
