@@ -74,19 +74,19 @@ export const borderDasharrayList = [
   },
   {
     name: 'Dotted4',
-    value: '5, 5, 1, 5'
+    value: '5,5,1,5'
   },
   {
     name: 'Dotted5',
-    value: '15, 10, 5, 10, 15'
+    value: '15,10,5,10,15'
   },
   {
     name: 'Dotted6',
-    value: '1, 5'
+    value: '1,5'
   },
   {
     name: 'Dotted7',
-    value: '6, 4'
+    value: '6,4'
   }
 ]
 
@@ -439,37 +439,37 @@ export const sidebarTriggerList = [
     value: 'outline',
     icon: 'iconfuhao-dagangshu'
   },
+  // {
+  //   name: 'AI',
+  //   value: 'ai',
+  //   icon: 'iconAIshengcheng'
+  // },
   {
     name: 'Setting',
     value: 'setting',
     icon: 'iconshezhi'
   },
-  {
-    name: 'ShortcutKey',
-    value: 'shortcutKey',
-    icon: 'iconjianpan'
-  }
+  // {
+  //   name: 'ShortcutKey',
+  //   value: 'shortcutKey',
+  //   icon: 'iconjianpan'
+  // }
 ]
 
 // 下载类型列表
 export const downTypeList = [
   {
-    name: 'Dedicated file',
+    name: '思绪 file',
     type: 'smm',
     icon: 'iconwenjian',
-    desc: 'Available for import'
-  },
-  {
-    name: 'JSON',
-    type: 'json',
-    icon: 'iconjson',
-    desc: 'Popular data exchange formats, Available for import'
+    desc:
+      'SimpleMindMap private format, can be used for re import, and the client can directly edit it'
   },
   {
     name: 'Image',
     type: 'png',
     icon: 'iconPNG',
-    desc: 'Suitable for viewing and sharing'
+    desc: 'Common image formats, suitable for viewing and sharing'
   },
   {
     name: 'SVG',
@@ -481,19 +481,19 @@ export const downTypeList = [
     name: 'PDF',
     type: 'pdf',
     icon: 'iconpdf',
-    desc: 'Suitable for printing'
+    desc: 'Suitable for viewing, browsing, and printing'
   },
   {
     name: 'Markdown',
     type: 'md',
     icon: 'iconmarkdown',
-    desc: 'Easy for other software to open'
+    desc: 'MD text format, easy for other software to open'
   },
   {
     name: 'XMind',
     type: 'xmind',
     icon: 'iconxmind',
-    desc: 'XMind file'
+    desc: 'XMind software file'
   },
   {
     name: 'Txt',
@@ -502,17 +502,23 @@ export const downTypeList = [
     desc: 'Plain text file'
   },
   {
+    name: 'Excel',
+    type: 'xlsx',
+    icon: 'iconfile-excel',
+    desc: 'Table text format, editable with Excel software'
+  },
+  {
     name: 'FreeMind',
     type: 'mm',
     icon: 'iconfreemind',
     desc: 'FreeMind software format'
   },
   {
-    name: 'Excel',
-    type: 'xlsx',
-    icon: 'iconfile-excel',
-    desc: 'Excel software format'
-  }
+    name: 'JSON',
+    type: 'json',
+    icon: 'iconjson',
+    desc: 'Popular data exchange format that can be used for re importing'
+  },
 ]
 
 // 编号类型列表
@@ -640,5 +646,37 @@ export const alignList = [
   {
     name: 'Align right',
     value: 'right'
+  }
+]
+
+// 结构列表
+export const layoutGroupList = [
+  {
+    name: 'Logical structure',
+    list: ['logicalStructure', 'logicalStructureLeft']
+  },
+  {
+    name: 'Mind map',
+    list: ['mindMap']
+  },
+  {
+    name: 'Organization structure',
+    list: ['organizationStructure']
+  },
+  {
+    name: 'Catalog organization',
+    list: ['catalogOrganization']
+  },
+  {
+    name: 'Timeline',
+    list: [
+      'timeline',
+      'timeline2',
+      'verticalTimeline'
+    ]
+  },
+  {
+    name: 'Fishbone',
+    list: ['fishbone']
   }
 ]

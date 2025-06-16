@@ -1,6 +1,10 @@
 <template>
   <Sidebar ref="sidebar" :title="$t('baseStyle.title')">
-    <div class="sidebarContent" :class="{ isDark: isDark }" v-if="data">
+    <div
+      class="sidebarContent customScrollbar"
+      :class="{ isDark: isDark }"
+      v-if="data"
+    >
       <!-- 背景 -->
       <div class="title noTop">{{ $t('baseStyle.background') }}</div>
       <div class="row">
@@ -94,11 +98,35 @@
                 </el-option>
               </el-select>
             </div>
+            <!-- 内置背景图片 -->
+            <div
+              class="rowItem spaceBetween"
+              style="margin-top: 8px; margin-bottom: 8px;"
+              v-if="bgList.length > 0"
+            >
+              <div class="name">{{ $t('baseStyle.builtInBackgroundImage') }}</div>
+              <div
+                class="iconBtn el-icon-arrow-down"
+                :class="{ top: !bgListExpand }"
+                @click="bgListExpand = !bgListExpand"
+              ></div>
+            </div>
+            <div class="bgList" :class="{ expand: bgListExpand }">
+              <div
+                class="bgItem"
+                v-for="(item, index) in bgList"
+                :key="index"
+                :class="{active: style.backgroundImage === item}"
+                @click="useBg(item)"
+              >
+                <img :src="item" alt="" />
+              </div>
+            </div>
           </el-tab-pane>
         </el-tabs>
       </div>
       <!-- 连线 -->
-      <div class="title noTop">{{ $t('baseStyle.line') }}</div>
+      <div class="title">{{ $t('baseStyle.line') }}</div>
       <div class="row">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.color') }}</span>
@@ -273,63 +301,8 @@
           >
         </div>
       </div>
-      <!-- 流动效果 -->
-      <div class="row" v-if="supportLineFlow">
-        <div class="rowItem">
-          <span class="name">{{ $t('style.openLineFlow') }}</span>
-          <el-checkbox
-            v-model="style.lineFlow"
-            @change="
-              value => {
-                update('lineFlow', value)
-              }
-            "
-          ></el-checkbox>
-        </div>
-        <div class="rowItem">
-          <span class="name">{{ $t('style.direction') }}</span>
-          <el-select
-            size="mini"
-            style="width: 80px"
-            v-model="style.lineFlowForward"
-            placeholder=""
-            @change="
-              value => {
-                update('lineFlowForward', value)
-              }
-            "
-          >
-            <el-option
-              key="1"
-              :label="$t('style.forward')"
-              :value="true"
-            ></el-option>
-            <el-option
-              key="2"
-              :label="$t('style.reverse')"
-              :value="false"
-            ></el-option>
-          </el-select>
-        </div>
-      </div>
-      <div class="row" v-if="supportLineFlow">
-        <div class="rowItem">
-          <span class="name">{{ $t('style.lineFlowDuration') }}</span>
-          <el-input-number
-            v-model="style.lineFlowDuration"
-            @change="
-              value => {
-                update('lineFlowDuration', value)
-              }
-            "
-            :min="0.1"
-            size="mini"
-            :step="0.5"
-          ></el-input-number>
-        </div>
-      </div>
       <!-- 彩虹线条 -->
-      <div class="title noTop">{{ $t('baseStyle.rainbowLines') }}</div>
+      <div class="title">{{ $t('baseStyle.rainbowLines') }}</div>
       <div class="row">
         <div class="rowItem">
           <el-popover
@@ -373,7 +346,7 @@
         </div>
       </div>
       <!-- 概要连线 -->
-      <div class="title noTop">{{ $t('baseStyle.lineOfOutline') }}</div>
+      <div class="title">{{ $t('baseStyle.lineOfOutline') }}</div>
       <div class="row">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.color') }}</span>
@@ -423,7 +396,7 @@
         </div>
       </div>
       <!-- 关联线 -->
-      <div class="title noTop">{{ $t('baseStyle.associativeLine') }}</div>
+      <div class="title">{{ $t('baseStyle.associativeLine') }}</div>
       <div class="row">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.associativeLineColor') }}</span>
@@ -566,7 +539,7 @@
         </div>
       </div>
       <!-- 关联线文字 -->
-      <div class="title noTop">{{ $t('baseStyle.associativeLineText') }}</div>
+      <div class="title">{{ $t('baseStyle.associativeLineText') }}</div>
       <div class="row">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.fontFamily') }}</span>
@@ -628,7 +601,7 @@
       </div>
       <!-- 节点边框风格 -->
       <template v-if="showNodeUseLineStyle">
-        <div class="title noTop">{{ $t('baseStyle.nodeBorderType') }}</div>
+        <div class="title">{{ $t('baseStyle.nodeBorderType') }}</div>
         <div class="row">
           <div class="rowItem">
             <el-checkbox
@@ -644,8 +617,8 @@
         </div>
       </template>
       <!-- 内边距 -->
-      <div class="title noTop">{{ $t('baseStyle.nodePadding') }}</div>
-      <div class="row">
+      <div class="title">{{ $t('baseStyle.nodePadding') }}</div>
+      <div class="row noBottom">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.horizontal') }}</span>
           <el-slider
@@ -674,8 +647,8 @@
         </div>
       </div>
       <!-- 图片 -->
-      <div class="title noTop">{{ $t('baseStyle.image') }}</div>
-      <div class="row">
+      <div class="title">{{ $t('baseStyle.image') }}</div>
+      <div class="row noBottom">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.maximumWidth') }}</span>
           <el-slider
@@ -708,7 +681,7 @@
         </div>
       </div>
       <!-- 图标 -->
-      <div class="title noTop">{{ $t('baseStyle.icon') }}</div>
+      <div class="title">{{ $t('baseStyle.icon') }}</div>
       <div class="row">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.size') }}</span>
@@ -726,8 +699,8 @@
         </div>
       </div>
       <!-- 二级节点外边距 -->
-      <div class="title noTop">{{ $t('baseStyle.nodeMargin') }}</div>
-      <div class="row column">
+      <div class="title">{{ $t('baseStyle.nodeMargin') }}</div>
+      <div class="row column noBottom">
         <el-tabs
           class="tab"
           v-model="marginActiveTab"
@@ -770,8 +743,8 @@
         </div>
       </div>
       <!-- 外框内边距 -->
-      <div class="title noTop">{{ $t('baseStyle.outerFramePadding') }}</div>
-      <div class="row">
+      <div class="title">{{ $t('baseStyle.outerFramePadding') }}</div>
+      <div class="row noBottom">
         <div class="rowItem">
           <span class="name">{{ $t('baseStyle.horizontal') }}</span>
           <el-slider
@@ -804,8 +777,8 @@
 </template>
 
 <script>
-import Sidebar from './Sidebar'
-import Color from './Color'
+import Sidebar from './Sidebar.vue'
+import Color from './Color.vue'
 import {
   lineWidthList,
   lineStyleList,
@@ -818,9 +791,9 @@ import {
   lineStyleMap,
   borderDasharrayList
 } from '@/config'
-import ImgUpload from '@/components/ImgUpload'
-import { storeConfig } from '@/api'
-import { mapState, mapMutations } from 'vuex'
+import ImgUpload from '@/components/ImgUpload/index.vue'
+import { storeData, storeConfig } from '@/api'
+import { mapState } from 'vuex'
 import {
   supportLineStyleLayoutsMap,
   supportLineRadiusLayouts,
@@ -829,13 +802,8 @@ import {
   rainbowLinesOptions
 } from '@/config/constant'
 
-/**
- * @Author: 王林
- * @Date: 2021-06-24 22:52:56
- * @Desc: 基础样式
- */
+// 基础样式
 export default {
-  name: 'BaseStyle',
   components: {
     Sidebar,
     Color,
@@ -843,8 +811,10 @@ export default {
   },
   props: {
     data: {
-      type: [Object, null],
-      default: null
+      type: [Object, null]
+    },
+    configData: {
+      type: Object
     },
     mindMap: {
       type: Object
@@ -855,6 +825,7 @@ export default {
       rainbowLinesOptions,
       lineWidthList,
       fontSizeList,
+      lineStyleMap,
       activeTab: 'color',
       marginActiveTab: 'second',
       style: {
@@ -898,7 +869,8 @@ export default {
       outerFramePadding: {
         outerFramePaddingX: 0,
         outerFramePaddingY: 0
-      }
+      },
+      bgListExpand: true
     }
   },
   computed: {
@@ -906,7 +878,7 @@ export default {
       activeSidebar: state => state.activeSidebar,
       localConfig: state => state.localConfig,
       isDark: state => state.localConfig.isDark,
-      supportLineFlow: state => state.supportLineFlow
+      bgList: state => state.bgList
     }),
     lineStyleList() {
       return lineStyleList[this.$i18n.locale] || lineStyleList.zh
@@ -930,9 +902,6 @@ export default {
     },
     fontFamilyList() {
       return fontFamilyList[this.$i18n.locale] || fontFamilyList.zh
-    },
-    lineStyleMap() {
-      return lineStyleMap[this.$i18n.locale] || lineStyleMap.zh
     },
     showNodeUseLineStyle() {
       return supportNodeUseLineStyleLayouts.includes(this.currentLayout)
@@ -995,8 +964,6 @@ export default {
     this.$bus.$off('setData', this.onSetData)
   },
   methods: {
-    ...mapMutations(['setLocalConfig']),
-
     onSetData() {
       if (this.activeSidebar !== 'baseStyle') return
       setTimeout(() => {
@@ -1054,7 +1021,7 @@ export default {
       this.data.theme.config[key] = value
       this.$bus.$emit('showLoading')
       this.mindMap.setThemeConfig(this.data.theme.config)
-      storeConfig({
+      storeData({
         theme: {
           template: this.mindMap.getTheme(),
           config: this.data.theme.config
@@ -1066,7 +1033,6 @@ export default {
     updateRainbowLinesConfig(item) {
       this.rainbowLinesPopoverVisible = false
       this.curRainbowLineColorList = item.list || null
-      this.data.config = this.data.config || {}
       let newConfig = null
       if (item.list) {
         newConfig = {
@@ -1078,24 +1044,19 @@ export default {
           open: false
         }
       }
-      this.data.config.rainbowLinesConfig = newConfig
+      this.configData.rainbowLinesConfig = newConfig
       this.mindMap.rainbowLines.updateRainLinesConfig(newConfig)
-      storeConfig({
-        config: this.data.config
-      })
+      storeConfig(this.configData)
     },
 
     // 更新外框
     updateOuterFramePadding(prop, value) {
       this.outerFramePadding[prop] = value
-      this.data.config = this.data.config || {}
-      this.data.config[prop] = value
+      this.configData[prop] = value
       this.mindMap.updateConfig({
         [prop]: value
       })
-      storeConfig({
-        config: this.data.config
-      })
+      storeConfig(this.configData)
       this.mindMap.render()
     },
 
@@ -1107,12 +1068,16 @@ export default {
       }
       this.data.theme.config[this.marginActiveTab][type] = value
       this.mindMap.setThemeConfig(this.data.theme.config)
-      storeConfig({
+      storeData({
         theme: {
           template: this.mindMap.getTheme(),
           config: this.data.theme.config
         }
       })
+    },
+
+    useBg(bg) {
+      this.update('backgroundImage', bg)
     }
   }
 }
@@ -1144,7 +1109,7 @@ export default {
     font-weight: 500;
     color: rgba(26, 26, 26, 0.9);
     margin-bottom: 10px;
-    margin-top: 20px;
+    margin-top: 35px;
 
     &.noTop {
       margin-top: 0;
@@ -1155,6 +1120,10 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+
+    &.noBottom {
+      margin-bottom: 0;
+    }
 
     &.column {
       flex-direction: column;
@@ -1178,6 +1147,10 @@ export default {
       display: flex;
       align-items: center;
       margin-bottom: 5px;
+
+      &.spaceBetween {
+        justify-content: space-between;
+      }
 
       .name {
         font-size: 12px;
@@ -1204,6 +1177,15 @@ export default {
         justify-content: center;
         cursor: pointer;
       }
+
+      .iconBtn {
+        cursor: pointer;
+        transition: all 0.3s;
+
+        &.top {
+          transform: rotateZ(-180deg);
+        }
+      }
     }
 
     .styleBtn {
@@ -1229,6 +1211,38 @@ export default {
         right: 0;
         bottom: 0;
         height: 2px;
+      }
+    }
+
+    .bgList {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      height: 75px;
+
+      &.expand {
+        height: max-content;
+      }
+
+      .bgItem {
+        width: 120px;
+        height: 73px;
+        border: 1px solid #e9e9e9;
+        border-radius: 5px;
+        overflow: hidden;
+        padding: 5px;
+        margin-bottom: 8px;
+        cursor: pointer;
+
+        &.active {
+          border-color: #409eff;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
     }
   }

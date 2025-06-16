@@ -15,8 +15,12 @@
     <Navigator v-if="mindMap" :mindMap="mindMap"></Navigator>
     <NavigatorToolbar :mindMap="mindMap" v-if="!isZenMode"></NavigatorToolbar>
     <OutlineSidebar :mindMap="mindMap"></OutlineSidebar>
-    <Style v-if="!isZenMode"></Style>
-    <BaseStyle :data="mindMapData" :mindMap="mindMap"></BaseStyle>
+    <Style v-if="mindMap && !isZenMode" :mindMap="mindMap"></Style>
+    <BaseStyle
+      :data="mindMapData"
+      :configData="mindMapConfig"
+      :mindMap="mindMap"
+    ></BaseStyle>
     <AssociativeLineStyle
       v-if="mindMap"
       :mindMap="mindMap"
@@ -30,7 +34,6 @@
       v-if="mindMap"
       :mindMap="mindMap"
     ></NodeNoteContentShow>
-    <NodeAttachment v-if="mindMap" :mindMap="mindMap"></NodeAttachment>
     <NodeImgPreview v-if="mindMap" :mindMap="mindMap"></NodeImgPreview>
     <SidebarTrigger v-if="!isZenMode"></SidebarTrigger>
     <Search v-if="mindMap" :mindMap="mindMap"></Search>
@@ -39,14 +42,16 @@
     <OutlineEdit v-if="mindMap" :mindMap="mindMap"></OutlineEdit>
     <Scrollbar v-if="isShowScrollbar && mindMap" :mindMap="mindMap"></Scrollbar>
     <FormulaSidebar v-if="mindMap" :mindMap="mindMap"></FormulaSidebar>
-    <SourceCodeEdit v-if="mindMap" :mindMap="mindMap"></SourceCodeEdit>
     <NodeOuterFrame v-if="mindMap" :mindMap="mindMap"></NodeOuterFrame>
     <NodeTagStyle v-if="mindMap" :mindMap="mindMap"></NodeTagStyle>
-    <Setting :data="mindMapData" :mindMap="mindMap"></Setting>
+    <Setting :configData="mindMapConfig" :mindMap="mindMap"></Setting>
     <NodeImgPlacementToolbar
       v-if="mindMap"
       :mindMap="mindMap"
     ></NodeImgPlacementToolbar>
+    <NodeNoteSidebar v-if="mindMap" :mindMap="mindMap"></NodeNoteSidebar>
+    <AiCreate v-if="mindMap && enableAi" :mindMap="mindMap"></AiCreate>
+    <AiChat v-if="enableAi"></AiChat>
     <div
       class="dragMask"
       v-if="showDragMask"
@@ -81,57 +86,46 @@ import RainbowLines from 'simple-mind-map/src/plugins/RainbowLines.js'
 import Demonstrate from 'simple-mind-map/src/plugins/Demonstrate.js'
 import OuterFrame from 'simple-mind-map/src/plugins/OuterFrame.js'
 import MindMapLayoutPro from 'simple-mind-map/src/plugins/MindMapLayoutPro.js'
+import NodeBase64ImageStorage from 'simple-mind-map/src/plugins/NodeBase64ImageStorage.js'
 import Themes from 'simple-mind-map-plugin-themes'
 // 协同编辑插件
 // import Cooperate from 'simple-mind-map/src/plugins/Cooperate.js'
-// 以下插件为付费插件，详情请查看开发文档。依次为：手绘风格插件、标记插件、编号插件、Freemind软件格式导入导出插件、Excel软件格式导入导出插件、待办插件、节点连线流动效果插件
-// import HandDrawnLikeStyle from 'simple-mind-map-plugin-handdrawnlikestyle'
-// import Notation from 'simple-mind-map-plugin-notation'
-// import Numbers from 'simple-mind-map-plugin-numbers'
-// import Freemind from 'simple-mind-map-plugin-freemind'
-// import Excel from 'simple-mind-map-plugin-excel'
-// import Checkbox from 'simple-mind-map-plugin-checkbox'
-// import LineFlow from 'simple-mind-map-plugin-lineflow'
-// npm link simple-mind-map-plugin-excel simple-mind-map-plugin-freemind simple-mind-map-plugin-numbers simple-mind-map-plugin-notation simple-mind-map-plugin-handdrawnlikestyle simple-mind-map-plugin-checkbox simple-mind-map simple-mind-map-plugin-themes simple-mind-map-plugin-lineflow
-import OutlineSidebar from './OutlineSidebar'
-import Style from './Style'
-import BaseStyle from './BaseStyle'
-import Theme from './Theme'
-import Structure from './Structure'
-import Count from './Count'
-import NavigatorToolbar from './NavigatorToolbar'
-import ShortcutKey from './ShortcutKey'
-import Contextmenu from './Contextmenu'
-import RichTextToolbar from './RichTextToolbar'
+import OutlineSidebar from './OutlineSidebar.vue'
+import Style from './Style.vue'
+import BaseStyle from './BaseStyle.vue'
+import Theme from './Theme.vue'
+import Structure from './Structure.vue'
+import Count from './Count.vue'
+import NavigatorToolbar from './NavigatorToolbar.vue'
+import ShortcutKey from './ShortcutKey.vue'
+import Contextmenu from './Contextmenu.vue'
+import RichTextToolbar from './RichTextToolbar.vue'
 import NodeNoteContentShow from './NodeNoteContentShow.vue'
-import { getData, storeData, storeConfig } from '@/api'
+import { getData, getConfig, storeData } from '@/api'
 import Navigator from './Navigator.vue'
 import NodeImgPreview from './NodeImgPreview.vue'
 import SidebarTrigger from './SidebarTrigger.vue'
 import { mapState } from 'vuex'
 import icon from '@/config/icon'
-import CustomNodeContent from './CustomNodeContent.vue'
-import Color from './Color.vue'
 import Vue from 'vue'
-import router from '../../../router'
-import store from '../../../store'
-import i18n from '../../../i18n'
 import Search from './Search.vue'
 import NodeIconSidebar from './NodeIconSidebar.vue'
 import NodeIconToolbar from './NodeIconToolbar.vue'
 import OutlineEdit from './OutlineEdit.vue'
 import { showLoading, hideLoading } from '@/utils/loading'
 import handleClipboardText from '@/utils/handleClipboardText'
+import { getParentWithClass } from '@/utils'
 import Scrollbar from './Scrollbar.vue'
 import exampleData from 'simple-mind-map/example/exampleData'
 import FormulaSidebar from './FormulaSidebar.vue'
-import SourceCodeEdit from './SourceCodeEdit.vue'
-import NodeAttachment from './NodeAttachment.vue'
 import NodeOuterFrame from './NodeOuterFrame.vue'
 import NodeTagStyle from './NodeTagStyle.vue'
 import Setting from './Setting.vue'
 import AssociativeLineStyle from './AssociativeLineStyle.vue'
 import NodeImgPlacementToolbar from './NodeImgPlacementToolbar.vue'
+import NodeNoteSidebar from './NodeNoteSidebar.vue'
+import AiCreate from './AiCreate.vue'
+import AiChat from './AiChat.vue'
 
 // 注册插件
 MindMap.usePlugin(MiniMap)
@@ -152,13 +146,17 @@ MindMap.usePlugin(MiniMap)
   .usePlugin(Demonstrate)
   .usePlugin(OuterFrame)
   .usePlugin(MindMapLayoutPro)
+  .usePlugin(NodeBase64ImageStorage)
 // .usePlugin(Cooperate) // 协同插件
 
 // 注册主题
 Themes.init(MindMap)
+// 扩展主题列表
+if (typeof MoreThemes !== 'undefined') {
+  MoreThemes.init(MindMap)
+}
 
 export default {
-  name: 'Edit',
   components: {
     OutlineSidebar,
     Style,
@@ -180,19 +178,21 @@ export default {
     OutlineEdit,
     Scrollbar,
     FormulaSidebar,
-    SourceCodeEdit,
-    NodeAttachment,
     NodeOuterFrame,
     NodeTagStyle,
     Setting,
     AssociativeLineStyle,
-    NodeImgPlacementToolbar
+    NodeImgPlacementToolbar,
+    NodeNoteSidebar,
+    AiCreate,
+    AiChat
   },
   data() {
     return {
       enableShowLoading: true,
       mindMap: null,
       mindMapData: null,
+      mindMapConfig: {},
       prevImg: '',
       storeConfigTimer: null,
       showDragMask: false
@@ -206,10 +206,9 @@ export default {
       enableDragImport: state => state.localConfig.enableDragImport,
       useLeftKeySelectionRightKeyDrag: state =>
         state.localConfig.useLeftKeySelectionRightKeyDrag,
-      isUseHandDrawnLikeStyle: state =>
-        state.localConfig.isUseHandDrawnLikeStyle,
       extraTextOnExport: state => state.extraTextOnExport,
-      isDragOutlineTreeNode: state => state.isDragOutlineTreeNode
+      isDragOutlineTreeNode: state => state.isDragOutlineTreeNode,
+      enableAi: state => state.localConfig.enableAi
     })
   },
   watch: {
@@ -226,18 +225,10 @@ export default {
       } else {
         this.removeScrollbarPlugin()
       }
-    },
-    isUseHandDrawnLikeStyle() {
-      if (this.isUseHandDrawnLikeStyle) {
-        this.addHandDrawnLikeStylePlugin()
-      } else {
-        this.removeHandDrawnLikeStylePlugin()
-      }
     }
   },
   mounted() {
     showLoading()
-    // this.showNewFeatureInfo()
     this.getData()
     this.init()
     this.$bus.$on('execCommand', this.execCommand)
@@ -250,7 +241,10 @@ export default {
     this.$bus.$on('startPainter', this.handleStartPainter)
     this.$bus.$on('node_tree_render_end', this.handleHideLoading)
     this.$bus.$on('showLoading', this.handleShowLoading)
+    this.$bus.$on('localStorageExceeded', this.onLocalStorageExceeded)
     window.addEventListener('resize', this.handleResize)
+    this.$bus.$on('showDownloadTip', this.showDownloadTip)
+    this.webTip()
   },
   beforeDestroy() {
     this.$bus.$off('execCommand', this.execCommand)
@@ -263,10 +257,21 @@ export default {
     this.$bus.$off('startPainter', this.handleStartPainter)
     this.$bus.$off('node_tree_render_end', this.handleHideLoading)
     this.$bus.$off('showLoading', this.handleShowLoading)
+    this.$bus.$off('localStorageExceeded', this.onLocalStorageExceeded)
     window.removeEventListener('resize', this.handleResize)
+    this.$bus.$off('showDownloadTip', this.showDownloadTip)
     this.mindMap.destroy()
   },
   methods: {
+    onLocalStorageExceeded() {
+      this.$notify({
+        type: 'warning',
+        title: this.$t('edit.tip'),
+        message: this.$t('edit.localStorageExceededTip'),
+        duration: 0
+      })
+    },
+
     handleStartTextEdit() {
       this.mindMap.renderer.startTextEdit()
     },
@@ -303,19 +308,19 @@ export default {
 
     // 获取思维导图数据，实际应该调接口获取
     getData() {
-      let storeData = getData()
-      this.mindMapData = storeData
+      this.mindMapData = getData()
+      this.mindMapConfig = getConfig() || {}
     },
 
     // 存储数据当数据有变时
     bindSaveEvent() {
       this.$bus.$on('data_change', data => {
-        storeData(data)
+        storeData({ root: data })
       })
       this.$bus.$on('view_data_change', data => {
         clearTimeout(this.storeConfigTimer)
         this.storeConfigTimer = setTimeout(() => {
-          storeConfig({
+          storeData({
             view: data
           })
         }, 300)
@@ -324,14 +329,14 @@ export default {
 
     // 手动保存
     manualSave() {
-      let data = this.mindMap.getData(true)
-      storeConfig(data)
+      storeData(this.mindMap.getData(true))
     },
 
     // 初始化
     init() {
       let hasFileURL = this.hasFileURL()
-      let { root, layout, theme, view, config } = this.mindMapData
+      let { root, layout, theme, view } = this.mindMapData
+      const config = this.mindMapConfig
       // 如果url中存在要打开的文件，那么思维导图数据、主题、布局都使用默认的
       if (hasFileURL) {
         root = {
@@ -364,6 +369,9 @@ export default {
         },
         openRealtimeRenderOnNodeTextEdit: true,
         enableAutoEnterTextEditWhenKeydown: true,
+        demonstrateConfig: {
+          openBlankMode: false
+        },
         ...(config || {}),
         iconList: [...icon],
         useLeftKeySelectionRightKeyDrag: this.useLeftKeySelectionRightKeyDrag,
@@ -437,149 +445,8 @@ export default {
               })
           })
         }
-        // createNodePrefixContent: node => {
-        //   const el = document.createElement('div')
-        //   el.style.width = '50px'
-        //   el.style.height = '50px'
-        //   el.style.background = 'red'
-        //   return {
-        //     el,
-        //     width: 50,
-        //     height: 50
-        //   }
-        // },
-        // createNodePostfixContent: node => {
-        //   const domparser = new DOMParser()
-        //   const doc = domparser.parseFromString(
-        //     '<b style="background-color: rgb(214, 239, 214);">白日依山尽</b>',
-        //     'text/html'
-        //   )
-        //   const el = doc.querySelector('b')
-        //   return {
-        //     el,
-        //     width: 50,
-        //     height: 50
-        //   }
-        // },
-        // addContentToHeader: () => {
-        //   const el = document.createElement('div')
-        //   el.className = 'footer'
-        //   el.innerHTML = '理想青年实验室'
-        //   const cssText = `
-        //     .header {
-        //       width: 100%;
-        //       height: 50px;
-        //       background: #f5f5f5;
-        //       display: flex;
-        //       justify-content: center;
-        //       align-items: center
-        //     }
-        //   `
-        //   return {
-        //     el,
-        //     cssText,
-        //     height: 50
-        //   }
-        // },
-        // beforeShortcutRun: (key, activeNodeList) => {
-        //   console.log(key, activeNodeList)
-        //   // 阻止删除快捷键行为
-        //   if (key === 'Backspace') {
-        //     return true
-        //   }
-        // }
-        // handleNodePasteImg: img => {
-        //   console.log(img)
-        //   return new Promise(resolve => {
-        //     setTimeout(() => {
-        //       resolve({
-        //         url: require('../../../assets/img/themes/autumn.jpg'),
-        //         size: {
-        //           width: 100,
-        //           height: 100
-        //         }
-        //       })
-        //     }, 200)
-        //   })
-        // }
-        // isUseCustomNodeContent: true,
-        // 示例1：组件里用到了router、store、i18n等实例化vue组件时需要用到的东西
-        // customCreateNodeContent: (node) => {
-        //   let el = document.createElement('div')
-        //   let Comp = Vue.extend(Color)
-        //   let comp = new Comp({
-        //     router,
-        //     store,
-        //     i18n
-        //   })
-        //   comp.$mount(el)
-        //   return comp.$el
-        // },
-        // 示例2：组件里没有用到示例1的东西
-        // customCreateNodeContent: (node) => {
-        //   let el = document.createElement('div')
-        //   let Comp = Vue.extend(CustomNodeContent)
-        //   let comp = new Comp({
-        //     propsData: {
-        //       html: node.nodeData.data.text
-        //     }
-        //   })
-        //   comp.$mount(el)
-        //   return comp.$el
-        // },
-        // 示例3：普通元素
-        // customCreateNodeContent: node => {
-        //   let el = document.createElement('div')
-        //   el.style.cssText = `
-        //     width: 203px;
-        //     height: 78px;
-        //     opacity: 0.8;
-        //     background-image: linear-gradient(0deg, rgba(53,130,172,0.06) 0%, rgba(24,75,116,0.06) 100%);
-        //     box-shadow: inset 0 1px 15px 0 rgba(119,196,255,0.40);
-        //     border-radius: 2px;
-        //     display: flex;
-        //     justify-content: center;
-        //     align-items: center;
-        //   `
-        //   el.innerHTML = `
-        //     ${node.nodeData.data.text}
-        //     <img crossOrigin="anonymous" src="/img/cactus.jpg" />
-        //   `
-        //   return el
-        // }
       })
-      if (this.openNodeRichText) this.addRichTextPlugin()
-      if (this.isShowScrollbar) this.addScrollbarPlugin()
-      if (this.isUseHandDrawnLikeStyle) this.addHandDrawnLikeStylePlugin()
-      if (typeof HandDrawnLikeStyle !== 'undefined') {
-        this.$store.commit('setSupportHandDrawnLikeStyle', true)
-      }
-      if (typeof Notation !== 'undefined') {
-        this.mindMap.addPlugin(Notation)
-        this.$store.commit('setSupportMark', true)
-      }
-      if (typeof Numbers !== 'undefined') {
-        this.mindMap.addPlugin(Numbers)
-        this.$store.commit('setSupportNumbers', true)
-      }
-      if (typeof Freemind !== 'undefined') {
-        this.mindMap.addPlugin(Freemind)
-        this.$store.commit('setSupportFreemind', true)
-        Vue.prototype.Freemind = Freemind
-      }
-      if (typeof Excel !== 'undefined') {
-        this.mindMap.addPlugin(Excel)
-        this.$store.commit('setSupportExcel', true)
-        Vue.prototype.Excel = Excel
-      }
-      if (typeof Checkbox !== 'undefined') {
-        this.mindMap.addPlugin(Checkbox)
-        this.$store.commit('setSupportCheckbox', true)
-      }
-      if (typeof LineFlow !== 'undefined') {
-        this.mindMap.addPlugin(LineFlow)
-        this.$store.commit('setSupportLineFlow', true)
-      }
+      this.loadPlugins()
       this.mindMap.keyCommand.addShortcut('Control+s', () => {
         this.manualSave()
       })
@@ -609,14 +476,14 @@ export default {
         'node_attachmentContextmenu',
         'demonstrate_jump',
         'exit_demonstrate',
-        'node_note_dblclick'
+        'node_note_dblclick',
+        'node_mousedown'
       ].forEach(event => {
         this.mindMap.on(event, (...args) => {
           this.$bus.$emit(event, ...args)
         })
       })
       this.bindSaveEvent()
-      this.testDynamicCreateNodes()
       // 如果应用被接管，那么抛出事件传递思维导图实例
       if (window.takeOverApp) {
         this.$bus.$emit('app_inited', this.mindMap)
@@ -629,26 +496,16 @@ export default {
       // 当正在编辑本地文件时通过该方法获取最新数据
       Vue.prototype.getCurrentData = () => {
         const fullData = this.mindMap.getData(true)
-        return { ...fullData, config: this.mindMapData.config }
+        return { ...fullData }
       }
       // 协同测试
       this.cooperateTest()
-      // 销毁
-      // setTimeout(() => {
-      //   console.log('销毁')
-      //   this.mindMap.destroy()
-      // }, 10000)
-      // 测试
-      // setTimeout(() => {
-      //   console.log(this.mindMap.renderer.root.getRect())
-      //   console.log(this.mindMap.renderer.root.getRectInSvg())
-      // }, 5000);
-      // setTimeout(() => {
-      //   this.mindMap.renderer.renderTree.data.fillColor = 'red'
-      //   this.mindMap.render()
-      //   this.mindMap.reRender()
-      //   this.mindMap.render()
-      // }, 5000)
+    },
+
+    // 加载相关插件
+    loadPlugins() {
+      if (this.openNodeRichText) this.addRichTextPlugin()
+      if (this.isShowScrollbar) this.addScrollbarPlugin()
     },
 
     // url中是否存在要打开的文件
@@ -708,21 +565,6 @@ export default {
       this.mindMap.updateConfig(data)
     },
 
-    // 显示新特性提示
-    showNewFeatureInfo() {
-      let showed = localStorage.getItem('SIMPLE_MIND_MAP_NEW_FEATURE_TIP_1')
-      if (!showed) {
-        this.$notify.info({
-          title: this.$t('edit.newFeatureNoticeTitle'),
-          message: this.$t('edit.newFeatureNoticeMessage'),
-          duration: 0,
-          onClose: () => {
-            localStorage.setItem('SIMPLE_MIND_MAP_NEW_FEATURE_TIP_1', true)
-          }
-        })
-      }
-    },
-
     // 加载节点富文本编辑插件
     addRichTextPlugin() {
       if (!this.mindMap) return
@@ -743,134 +585,6 @@ export default {
     // 移除滚动条插件
     removeScrollbarPlugin() {
       this.mindMap.removePlugin(ScrollbarPlugin)
-    },
-
-    // 加载手绘风格插件
-    addHandDrawnLikeStylePlugin() {
-      try {
-        if (!this.mindMap) return
-        this.mindMap.addPlugin(HandDrawnLikeStyle)
-        this.mindMap.reRender()
-      } catch (error) {
-        console.log('手绘风格插件不存在')
-      }
-    },
-
-    // 移除手绘风格插件
-    removeHandDrawnLikeStylePlugin() {
-      try {
-        this.mindMap.removePlugin(HandDrawnLikeStyle)
-        this.mindMap.reRender()
-      } catch (error) {
-        console.log('手绘风格插件不存在')
-      }
-    },
-
-    // 测试动态插入节点
-    testDynamicCreateNodes() {
-      // return
-      setTimeout(() => {
-        // 动态给指定节点添加子节点
-        // this.mindMap.execCommand(
-        //   'INSERT_CHILD_NODE',
-        //   false,
-        //   null,
-        //   {
-        //     text: '自定义内容'
-        //   },
-        //   [
-        //     {
-        //       data: {
-        //         text: '自定义子节点'
-        //       }
-        //     }
-        //   ]
-        // )
-        // 动态给指定节点添加同级节点
-        // this.mindMap.execCommand(
-        //   'INSERT_NODE',
-        //   false,
-        //   null,
-        //   {
-        //     text: '自定义内容'
-        //   },
-        //   [
-        //     {
-        //       data: {
-        //         text: '自定义同级节点'
-        //       },
-        //       children: [
-        //         {
-        //           data: {
-        //             text: '自定义同级节点2'
-        //           },
-        //           children: []
-        //         }
-        //       ]
-        //     }
-        //   ]
-        // )
-        // 动态插入多个子节点
-        // this.mindMap.execCommand('INSERT_MULTI_CHILD_NODE', null, [
-        //   {
-        //     data: {
-        //       text: '自定义节点1'
-        //     },
-        //     children: [
-        //       {
-        //         data: {
-        //           text: '自定义节点1-1'
-        //         },
-        //         children: []
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     data: {
-        //       text: '自定义节点2'
-        //     },
-        //     children: [
-        //       {
-        //         data: {
-        //           text: '自定义节点2-1'
-        //         },
-        //         children: []
-        //       }
-        //     ]
-        //   }
-        // ])
-        // 动态插入多个同级节点
-        // this.mindMap.execCommand('INSERT_MULTI_NODE', null, [
-        //   {
-        //     data: {
-        //       text: '自定义节点1'
-        //     },
-        //     children: [
-        //       {
-        //         data: {
-        //           text: '自定义节点1-1'
-        //         },
-        //         children: []
-        //       }
-        //     ]
-        //   },
-        //   {
-        //     data: {
-        //       text: '自定义节点2'
-        //     },
-        //     children: [
-        //       {
-        //         data: {
-        //           text: '自定义节点2-1'
-        //         },
-        //         children: []
-        //       }
-        //     ]
-        //   }
-        // ])
-        // 动态删除指定节点
-        // this.mindMap.execCommand('REMOVE_NODE', this.mindMap.renderer.root.children[0])
-      }, 5000)
     },
 
     // 协同测试
@@ -899,9 +613,11 @@ export default {
       if (!this.enableDragImport || this.isDragOutlineTreeNode) return
       this.showDragMask = true
     },
+
     onDragleave() {
       this.showDragMask = false
     },
+
     onDrop(e) {
       if (!this.enableDragImport) return
       this.showDragMask = false
@@ -909,6 +625,70 @@ export default {
       const file = dt.files && dt.files[0]
       if (!file) return
       this.$bus.$emit('importFile', file)
+    },
+
+    // 网页版试用提示
+    webTip() {
+      const storageKey = 'webUseTip'
+      const data = localStorage.getItem(storageKey)
+      if (data) {
+        return
+      }
+      this.showDownloadTip(
+        '重要提示',
+        '网页版已暂停更新，部分功能缺失，请下载客户端获得完整体验~'
+      )
+      localStorage.setItem(storageKey, 1)
+    },
+
+    showDownloadTip(title, desc) {
+      const h = this.$createElement
+      this.$msgbox({
+        title,
+        message: h('div', null, [
+          h(
+            'p',
+            {
+              style: {
+                marginBottom: '12px'
+              }
+            },
+            desc
+          ),
+          h('div', null, [
+            h(
+              'a',
+              {
+                attrs: {
+                  href:
+                    'https://pan.baidu.com/s/1huasEbKsGNH2Af68dvWiOg?pwd=3bp3',
+                  target: '_blank'
+                },
+                style: {
+                  color: '#409eff',
+                  marginRight: '12px'
+                }
+              },
+              this.$t('edit.downBaidu')
+            ),
+            h(
+              'a',
+              {
+                attrs: {
+                  href: 'https://github.com/wanglin2/mind-map/releases',
+                  target: '_blank'
+                },
+                style: {
+                  color: '#409eff'
+                }
+              },
+              this.$t('edit.downGithub')
+            )
+          ])
+        ]),
+        showCancelButton: false,
+        showConfirmButton: false
+      })
     }
   }
 }
@@ -946,11 +726,6 @@ export default {
     top: 0px;
     width: 100%;
     height: 100%;
-
-    // left: 100px;
-    // top: 100px;
-    // right: 100px;
-    // bottom: 100px;
   }
 }
 </style>

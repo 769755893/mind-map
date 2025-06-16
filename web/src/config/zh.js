@@ -55,7 +55,7 @@ export const fontFamilyList = [
 ]
 
 // 字号
-export const fontSizeList = [10, 12, 16, 18, 24, 32, 48]
+export const fontSizeList = [10, 12, 14, 16, 18, 24, 32, 48]
 
 // 颜色
 export const colorList = [
@@ -121,19 +121,19 @@ export const borderDasharrayList = [
   },
   {
     name: '虚线4',
-    value: '5, 5, 1, 5'
+    value: '5,5,1,5'
   },
   {
     name: '虚线5',
-    value: '15, 10, 5, 10, 15'
+    value: '15,10,5,10,15'
   },
   {
     name: '虚线6',
-    value: '1, 5'
+    value: '1,5'
   },
   {
     name: '虚线7',
-    value: '6, 4'
+    value: '6,4'
   }
 ]
 
@@ -142,6 +142,9 @@ export const borderRadiusList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 // 线宽
 export const lineWidthList = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+// 行高
+export const lineHeightList = [1, 1.2, 1.5, 2, 2.5, 3]
 
 export const lineStyleMap = {
   straight: `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="60" height="26"><path d="M18,14L30,14L30,5L42,5" fill="none" stroke="#000" stroke-width="2"></path><path d="M18,14L30,14L30,23L42,23" fill="none" stroke="#000" stroke-width="2"></path></svg>`,
@@ -504,6 +507,10 @@ export const langList = [
   {
     value: 'en',
     name: 'English'
+  },
+  {
+    value: 'vi',
+    name: 'Tiếng Việt'
   }
 ]
 
@@ -534,37 +541,36 @@ export const sidebarTriggerList = [
     value: 'outline',
     icon: 'iconfuhao-dagangshu'
   },
+  // {
+  //   name: 'AI',
+  //   value: 'ai',
+  //   icon: 'iconAIshengcheng'
+  // },
   {
     name: '设置',
     value: 'setting',
     icon: 'iconshezhi'
   },
-  {
-    name: '快捷键',
-    value: 'shortcutKey',
-    icon: 'iconjianpan'
-  }
+  // {
+  //   name: '快捷键',
+  //   value: 'shortcutKey',
+  //   icon: 'iconjianpan'
+  // }
 ]
 
 // 下载类型列表
 export const downTypeList = [
   {
-    name: '专有文件',
+    name: '思绪文件',
     type: 'smm',
     icon: 'iconwenjian',
-    desc: '可用于导入'
-  },
-  {
-    name: 'JSON',
-    type: 'json',
-    icon: 'iconjson',
-    desc: '流行的数据交换格式，可用于导入'
+    desc: 'SimpleMindMap私有格式，可用于再次导入，客户端可直接编辑'
   },
   {
     name: '图片',
     type: 'png',
     icon: 'iconPNG',
-    desc: '适合查看分享'
+    desc: '常用图片格式，适合查看分享'
   },
   {
     name: 'SVG',
@@ -576,19 +582,19 @@ export const downTypeList = [
     name: 'PDF',
     type: 'pdf',
     icon: 'iconpdf',
-    desc: '适合打印'
+    desc: '适合查看浏览和打印'
   },
   {
     name: 'Markdown',
     type: 'md',
     icon: 'iconmarkdown',
-    desc: '便于其他软件打开'
+    desc: 'md文本格式，便于其他软件打开'
   },
   {
     name: 'XMind',
     type: 'xmind',
     icon: 'iconxmind',
-    desc: 'XMind格式'
+    desc: 'XMind软件格式'
   },
   {
     name: 'Txt',
@@ -597,17 +603,23 @@ export const downTypeList = [
     desc: '纯文本文件'
   },
   {
+    name: 'Excel',
+    type: 'xlsx',
+    icon: 'iconfile-excel',
+    desc: '表格文本形式，可用Excel软件编辑'
+  },
+  {
     name: 'FreeMind',
     type: 'mm',
     icon: 'iconfreemind',
     desc: 'FreeMind软件格式'
   },
   {
-    name: 'Excel',
-    type: 'xlsx',
-    icon: 'iconfile-excel',
-    desc: 'Excel软件格式'
-  }
+    name: 'JSON',
+    type: 'json',
+    icon: 'iconjson',
+    desc: '流行的数据交换格式，可用于再次导入'
+  },
 ]
 
 // 编号类型列表
@@ -735,5 +747,37 @@ export const alignList = [
   {
     name: '右对齐',
     value: 'right'
+  }
+]
+
+// 结构列表
+export const layoutGroupList = [
+  {
+    name: '逻辑结构图',
+    list: ['logicalStructure', 'logicalStructureLeft']
+  },
+  {
+    name: '思维导图',
+    list: ['mindMap']
+  },
+  {
+    name: '组织结构图',
+    list: ['organizationStructure']
+  },
+  {
+    name: '目录组织图',
+    list: ['catalogOrganization']
+  },
+  {
+    name: '时间轴',
+    list: [
+      'timeline',
+      'timeline2',
+      'verticalTimeline'
+    ]
+  },
+  {
+    name: '鱼骨图',
+    list: ['fishbone']
   }
 ]

@@ -1,5 +1,5 @@
 <template>
-  <Sidebar ref="sidebar" :title="'关联线样式'">
+  <Sidebar ref="sidebar" :title="$t('baseStyle.associativeLineStyle')">
     <div class="sidebarContent" :class="{ isDark: isDark }">
       <div class="title noTop">{{ $t('baseStyle.associativeLine') }}</div>
       <div class="row">
@@ -209,28 +209,15 @@
 </template>
 
 <script>
-import Sidebar from './Sidebar'
-import Color from './Color'
+import Sidebar from './Sidebar.vue'
+import Color from './Color.vue'
 import {
   lineWidthList,
-  lineStyleList,
-  backgroundRepeatList,
-  backgroundPositionList,
-  backgroundSizeList,
   fontFamilyList,
   fontSizeList,
-  rootLineKeepSameInCurveList,
-  lineStyleMap,
   borderDasharrayList
 } from '@/config'
 import { mapState, mapMutations } from 'vuex'
-import {
-  supportLineStyleLayoutsMap,
-  supportLineRadiusLayouts,
-  supportNodeUseLineStyleLayouts,
-  supportRootLineKeepSameInCurveLayouts,
-  rainbowLinesOptions
-} from '@/config/constant'
 
 const defaultStyle = {
   associativeLineColor: '',
@@ -244,7 +231,6 @@ const defaultStyle = {
 }
 
 export default {
-  name: 'BaseStyle',
   components: {
     Sidebar,
     Color
@@ -312,7 +298,9 @@ export default {
     },
 
     associativeLineDeactivate() {
-      this.setActiveSidebar('')
+      if (this.activeSidebar === 'associativeLineStyle') {
+        this.setActiveSidebar(null)
+      }
       this.activeLineNode = null
       this.activeLineToNode = null
       this.style = {

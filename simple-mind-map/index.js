@@ -11,16 +11,18 @@ import {
   layoutValueList,
   CONSTANTS,
   ERROR_TYPES,
-  cssContent
+  cssContent,
+  nodeDataNoStylePropList
 } from './src/constants/constant'
-import { SVG } from '@svgdotjs/svg.js'
+import { SVG, G, Rect } from '@svgdotjs/svg.js'
 import {
   simpleDeepClone,
   getObjectChangedProps,
   isUndef,
   handleGetSvgDataExtraContent,
   getNodeTreeBoundingRect,
-  mergeTheme
+  mergeTheme,
+  createUidForAppointNodes
 } from './src/utils'
 import defaultTheme, {
   checkIsNodeSizeIndependenceConfig
@@ -56,7 +58,7 @@ class MindMap {
     this.cssEl = null
     this.cssTextMap = {} // 该样式在实例化时会动态添加到页面，同时导出为svg时也会添加到svg源码中
 
-    // 节点前置内容列表
+    // 节点前置/后置内容列表
     /*
       {
         name: '',// 一个唯一的类型标识
@@ -75,6 +77,27 @@ class MindMap {
       }
     */
     this.nodeInnerPrefixList = []
+    this.nodeInnerPostfixList = []
+
+    // 编辑节点的类名列表，快捷键响应会检查事件目标是否是body或该列表中的元素，是的话才会响应
+    // 该检查可以通过customCheckEnableShortcut选项来覆盖
+    this.editNodeClassList = []
+
+    // 扩展的节点形状列表
+    /*
+      {
+        createShape: (node) => {
+          return path
+        },
+        getPadding: ({ node, width, height, paddingX, paddingY }) => {
+          return {
+            paddingX: 0,
+            paddingY: 0
+          }  
+        }
+      }
+    */
+    this.extendShapeList = []
 
     // 画布
     this.initContainer()
@@ -84,6 +107,15 @@ class MindMap {
 
     // 初始化缓存数据
     this.initCache()
+
+    // 注册插件
+    MindMap.pluginList
+      .filter(plugin => {
+        return plugin.preload
+      })
+      .forEach(plugin => {
+        this.initPlugin(plugin)
+      })
 
     // 事件类
     this.event = new Event({
@@ -114,9 +146,13 @@ class MindMap {
     this.batchExecution = new BatchExecution()
 
     // 注册插件
-    MindMap.pluginList.forEach(plugin => {
-      this.initPlugin(plugin)
-    })
+    MindMap.pluginList
+      .filter(plugin => {
+        return !plugin.preload
+      })
+      .forEach(plugin => {
+        this.initPlugin(plugin)
+      })
 
     // 添加必要的css样式
     this.addCss()
@@ -149,6 +185,8 @@ class MindMap {
     if (data.data && !data.data.expand) {
       data.data.expand = true
     }
+    // 给没有uid的节点添加uid
+    createUidForAppointNodes([data], false, null, true)
     return data
   }
 
@@ -237,12 +275,33 @@ class MindMap {
     if (this.cssEl) document.head.removeChild(this.cssEl)
   }
 
+  // 检查某个编辑节点类名是否存在，返回索引
+  checkEditNodeClassIndex(className) {
+    return this.editNodeClassList.findIndex(item => {
+      return item === className
+    })
+  }
+
+  // 添加一个编辑节点类名
+  addEditNodeClass(className) {
+    const index = this.checkEditNodeClassIndex(className)
+    if (index === -1) {
+      this.editNodeClassList.push(className)
+    }
+  }
+
+  // 删除一个编辑节点类名
+  deleteEditNodeClass(className) {
+    const index = this.checkEditNodeClassIndex(className)
+    if (index !== -1) {
+      this.editNodeClassList.splice(index, 1)
+    }
+  }
+
   //  渲染，部分渲染
   render(callback, source = '') {
-    this.batchExecution.push('render', () => {
-      this.initTheme()
-      this.renderer.render(callback, source)
-    })
+    this.initTheme()
+    this.renderer.render(callback, source)
   }
 
   //  重新渲染
@@ -395,6 +454,7 @@ class MindMap {
 
   // 更新画布数据，如果新的数据是在当前画布节点数据基础上增删改查后形成的，那么可以使用该方法来更新画布数据
   updateData(data) {
+    data = this.handleData(data)
     this.emit('before_update_data', data)
     this.renderer.setData(data)
     this.render()
@@ -411,7 +471,7 @@ class MindMap {
     this.command.clearHistory()
     this.command.addHistory()
     this.renderer.setData(data)
-    this.reRender(() => {}, CONSTANTS.SET_DATA)
+    this.reRender()
     this.emit('set_data', data)
   }
 
@@ -632,6 +692,35 @@ class MindMap {
     }
   }
 
+  // 扩展节点形状
+  addShape(shape) {
+    if (!shape) return
+    const exist = this.extendShapeList.find(item => {
+      return item.name === shape.name
+    })
+    if (exist) return
+    this.extendShapeList.push(shape)
+  }
+
+  // 删除扩展的形状
+  removeShape(name) {
+    const index = this.extendShapeList.findIndex(item => {
+      return item.name === name
+    })
+    if (index !== -1) {
+      this.extendShapeList.splice(index, 1)
+    }
+  }
+
+  // 获取SVG.js库的一些对象
+  getSvgObjects() {
+    return {
+      SVG,
+      G,
+      Rect
+    }
+  }
+
   // 添加插件
   addPlugin(plugin, opt) {
     let index = MindMap.hasPlugin(plugin)
@@ -693,6 +782,39 @@ class MindMap {
     this.removeCss()
     MindMap.instanceCount--
   }
+}
+
+// 扩展节点数据中非样式的字段列表
+// 内部会根据这个列表判断，如果不在这个列表里的字段都会认为是样式字段
+/*
+比如一个节点的数据为：
+
+{
+  data: {
+    text: '',
+    note: '',
+    color: ''
+  },
+  children: []
+}
+
+color字段不在nodeDataNoStylePropList列表中，所以是样式，内部一些操作的方法会用到，所以如果你新增了自定义的节点数据，并且不是`_`开头的，那么需要通过该方法扩展
+*/
+let _extendNodeDataNoStylePropList = []
+MindMap.extendNodeDataNoStylePropList = (list = []) => {
+  _extendNodeDataNoStylePropList.push(...list)
+  nodeDataNoStylePropList.push(...list)
+}
+MindMap.resetNodeDataNoStylePropList = () => {
+  _extendNodeDataNoStylePropList.forEach(item => {
+    const index = nodeDataNoStylePropList.findIndex(item2 => {
+      return item2 === item
+    })
+    if (index !== -1) {
+      nodeDataNoStylePropList.splice(index, 1)
+    }
+  })
+  _extendNodeDataNoStylePropList = []
 }
 
 // 插件列表

@@ -178,22 +178,25 @@
         <span class="icon iconfont iconwaikuang"></span>
         <span class="text">{{ $t('toolbar.outerFrame') }}</span>
       </div>
-      <NodeAnnotationBtn
-        v-if="item === 'annotation' && supportMark"
-        :isDark="isDark"
-        :dir="dir"
-        @setAnnotation="onSetAnnotation"
-      ></NodeAnnotationBtn>
+      <div
+        v-if="item === 'ai'"
+        class="toolbarBtn"
+        :class="{
+          disabled: hasGeneralization
+        }"
+        @click="aiCrate"
+      >
+        <span class="icon iconfont iconAIshengcheng"></span>
+        <span class="text">{{ $t('toolbar.ai') }}</span>
+      </div>
     </template>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import NodeAnnotationBtn from './NodeAnnotationBtn.vue'
 
 export default {
-  components: { NodeAnnotationBtn },
   props: {
     dir: {
       type: String,
@@ -219,8 +222,7 @@ export default {
   },
   computed: {
     ...mapState({
-      isDark: state => state.localConfig.isDark,
-      supportMark: state => state.supportMark
+      isDark: state => state.localConfig.isDark
     }),
     hasRoot() {
       return (
@@ -235,6 +237,12 @@ export default {
           return node.isGeneralization
         }) !== -1
       )
+    },
+    annotationRightHasBtn() {
+      const index = this.list.findIndex(item => {
+        return item === 'annotation'
+      })
+      return index !== -1 && index < this.list.length - 1
     }
   },
   created() {
@@ -299,6 +307,11 @@ export default {
     // 设置标记
     onSetAnnotation(...args) {
       this.$bus.$emit('execCommand', 'SET_NOTATION', this.activeNodes, ...args)
+    },
+
+    // AI生成整体
+    aiCrate() {
+      this.$bus.$emit('ai_create_all')
     }
   }
 }
@@ -376,6 +389,7 @@ export default {
 
     .text {
       margin-top: 3px;
+      text-align: center;
     }
   }
 

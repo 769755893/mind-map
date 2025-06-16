@@ -62,41 +62,6 @@
       <div class="item" @click="exec('EXPAND_ALL')">
         <span class="name">{{ $t('contextmenu.expandNodeChild') }}</span>
       </div>
-      <div class="item" v-if="supportNumbers">
-        <span class="name">{{ $t('contextmenu.number') }}</span>
-        <span class="el-icon-arrow-right"></span>
-        <div
-          class="subItems listBox"
-          :class="{ isDark: isDark, showLeft: subItemsShowLeft }"
-          style="top: -170px"
-        >
-          <div
-            class="item"
-            v-for="item in numberTypeList"
-            :key="'type' + item.value"
-            @click="setNodeNumber('type', item.value)"
-          >
-            <span class="name">{{ item.name }}</span>
-            {{ numberType === item.value ? '√' : '' }}
-          </div>
-          <div class="splitLine"></div>
-          <div
-            class="item"
-            v-for="item in numberLevelList"
-            :key="'level' + item.value"
-            :class="{ disabled: numberType === '' }"
-            @click="setNodeNumber('level', item.value)"
-          >
-            <span class="name">{{ item.name }}</span>
-            {{ numberLevel === item.value ? '√' : '' }}
-          </div>
-        </div>
-      </div>
-      <div class="item" @click="setCheckbox" v-if="supportCheckbox">
-        <span class="name">{{
-          hasCheckbox ? $t('contextmenu.removeToDo') : $t('contextmenu.addToDo')
-        }}</span>
-      </div>
       <div class="splitLine"></div>
       <div class="item danger" @click="exec('REMOVE_NODE')">
         <span class="name">{{ $t('contextmenu.deleteNode') }}</span>
@@ -139,6 +104,10 @@
       </div>
       <div class="item" @click="exec('EXPORT_CUR_NODE_TO_PNG')">
         <span class="name">{{ $t('contextmenu.exportNodeToPng') }}</span>
+      </div>
+      <div class="splitLine" v-if="enableAi"></div>
+      <div class="item" @click="aiCreate" v-if="enableAi">
+        <span class="name">{{ $t('contextmenu.aiCreate') }}</span>
       </div>
     </template>
     <template v-if="type === 'svg'">
@@ -220,13 +189,8 @@ import { transformToTxt } from 'simple-mind-map/src/parse/toTxt'
 import { setDataToClipboard, setImgToClipboard, copy } from '@/utils'
 import { numberTypeList, numberLevelList } from '@/config'
 
-/**
- * @Author: 王林
- * @Date: 2021-06-24 22:53:10
- * @Desc: 右键菜单
- */
+// 右键菜单
 export default {
-  name: 'Contextmenu',
   props: {
     mindMap: {
       type: Object
@@ -245,15 +209,15 @@ export default {
       enableCopyToClipboardApi: navigator.clipboard,
       numberType: '',
       numberLevel: '',
-      subItemsShowLeft: false
+      subItemsShowLeft: false,
+      isNodeMousedown: false
     }
   },
   computed: {
     ...mapState({
       isZenMode: state => state.localConfig.isZenMode,
       isDark: state => state.localConfig.isDark,
-      supportNumbers: state => state.supportNumbers,
-      supportCheckbox: state => state.supportCheckbox
+      enableAi: state => state.localConfig.enableAi
     }),
     expandList() {
       return [
@@ -334,6 +298,9 @@ export default {
     },
     hasCheckbox() {
       return !!this.node.getData('checkbox')
+    },
+    hasNodeLink() {
+      return !!this.node.getData('nodeLink')
     }
   },
   created() {
@@ -344,6 +311,7 @@ export default {
     this.$bus.$on('svg_mousedown', this.onMousedown)
     this.$bus.$on('mouseup', this.onMouseup)
     this.$bus.$on('translate', this.hide)
+    this.$bus.$on('node_mousedown', this.onNodeMousedown)
   },
   beforeDestroy() {
     this.$bus.$off('node_contextmenu', this.show)
@@ -353,6 +321,7 @@ export default {
     this.$bus.$off('svg_mousedown', this.onMousedown)
     this.$bus.$off('mouseup', this.onMouseup)
     this.$bus.$off('translate', this.hide)
+    this.$bus.$off('node_mousedown', this.onNodeMousedown)
   },
   methods: {
     ...mapMutations(['setLocalConfig']),
@@ -387,6 +356,10 @@ export default {
       })
     },
 
+    onNodeMousedown() {
+      this.isNodeMousedown = true
+    },
+
     // 鼠标按下事件
     onMousedown(e) {
       if (e.which !== 3) {
@@ -400,6 +373,10 @@ export default {
     // 鼠标松开事件
     onMouseup(e) {
       if (!this.isMousedown) {
+        return
+      }
+      if (this.isNodeMousedown) {
+        this.isNodeMousedown = false
         return
       }
       this.isMousedown = false
@@ -490,45 +467,6 @@ export default {
       this.hide()
     },
 
-    // 设置节点编号
-    setNodeNumber(prop, value) {
-      if (prop === 'type') {
-        this.numberType = value
-        if (value === '') {
-          // 无编号
-          this.numberLevel = ''
-          this.mindMap.execCommand('SET_NUMBER', [], null)
-          return
-        } else {
-          // 有编号
-          if (this.numberLevel === '') {
-            this.numberLevel = 1
-          }
-        }
-      }
-      if (prop === 'level') {
-        this.numberLevel = value
-      }
-      this.mindMap.execCommand('SET_NUMBER', [], {
-        [prop]: value
-      })
-      this.hide()
-    },
-
-    // 设置待办
-    setCheckbox() {
-      this.mindMap.execCommand(
-        'SET_CHECKBOX',
-        [],
-        this.hasCheckbox
-          ? null
-          : {
-              done: false
-            }
-      )
-      this.hide()
-    },
-
     // 复制到剪贴板
     async copyToClipboard(type) {
       try {
@@ -569,6 +507,12 @@ export default {
         console.log(error)
         this.$message.error(this.$t('contextmenu.copyFail'))
       }
+    },
+
+    // AI续写
+    aiCreate() {
+      this.$bus.$emit('ai_create_part', this.node)
+      this.hide()
     }
   }
 }
