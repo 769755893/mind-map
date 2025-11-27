@@ -1728,9 +1728,9 @@ class Render {
     _walk(this.renderTree, true, !uid)
 
     this.mindMap.render(() => {
-      if (isSetRootNodeCenter) {
-        this.setRootNodeCenter()
-      }
+      // if (isSetRootNodeCenter) {
+      //   this.setRootNodeCenter()
+      // }
     })
   }
 
